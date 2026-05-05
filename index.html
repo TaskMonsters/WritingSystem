@@ -481,6 +481,113 @@ textarea { resize: none; overflow-y: hidden; }
 ::-webkit-scrollbar-thumb:hover { background: #4c1d95; }
 
 /* ── RESPONSIVE ──────────────────────────────────────────────────────────── */
+
+/* Tablet Optimization (768px to 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+  /* Sidebar adjustments for tablet */
+  .sidebar { width: 200px; }
+  .nav-item { padding: 10px 14px; font-size: 13px; }
+  .nav-section-label { padding: 12px 14px 4px; }
+  
+  /* Main content spacing */
+  .main-content { padding: 24px 32px 24px 32px; }
+  
+  /* Header adjustments */
+  .app-header { padding: 0 14px; height: 56px; gap: 14px; }
+  .header-project-title { font-size: 14px; max-width: 160px; }
+  .header-genre-badge { font-size: 10px; padding: 2px 8px; }
+  
+  /* Button touch targets for tablet */
+  .btn { padding: 10px 18px; font-size: 14px; }
+  .btn-sm { padding: 6px 12px; font-size: 13px; }
+  .btn-lg { padding: 14px 32px; font-size: 16px; }
+  
+  /* Form elements - better touch targets */
+  .input, textarea, select { padding: 10px 14px; font-size: 14px; }
+  .checkbox { width: 18px; height: 18px; }
+  
+  /* Grid layouts for tablet */
+  .kanban-board { grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .stats-row { grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .cards-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
+  .entity-card { padding: 18px; }
+  .achievements-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 18px; }
+  .magic-grid { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
+  
+  /* Modal adjustments */
+  .modal { max-width: min(85vw, 700px); }
+  .modal-wide { max-width: min(90vw, 800px); }
+  .modal-lore { max-width: min(90vw, 780px); }
+  .modal-xl { max-width: min(92vw, 1000px); }
+  .modal-cols { grid-template-columns: 1fr 1fr; gap: 18px; }
+  
+  /* Typography scaling */
+  .page-title { font-size: 22px; }
+  .stat-num { font-size: 26px; }
+  .entity-name { font-size: 14px; }
+  .entity-icon { font-size: 22px; }
+  
+  /* Focus timer */
+  .focus-timer { padding: 6px 12px; }
+  .timer-display { font-size: 20px; min-width: 60px; }
+  .timer-preset { padding: 4px 10px; font-size: 12px; }
+  
+  /* Kanban cards */
+  .kanban-col { min-height: 250px; }
+  .ticket-card { padding: 10px; }
+  .ticket-title { font-size: 13px; }
+  
+  /* Scene and timeline items */
+  .scene-item { padding: 14px 18px; }
+  .timeline-content { padding: 14px 18px; }
+  .scene-num { width: 32px; height: 32px; font-size: 13px; }
+  
+  /* Goal cards */
+  .goal-card { padding: 18px; }
+  .goal-title { font-size: 16px; }
+  .goal-pct { font-size: 15px; }
+  
+  /* Stat card improvements */
+  .stat-card { padding: 18px; }
+  .stat-label { font-size: 13px; }
+  
+  /* Chart improvements */
+  .bar-chart { height: 160px; }
+  .bar-label { font-size: 11px; }
+  
+  /* Sanctuary editor */
+  .sanctuary-editor { font-size: 17px; padding: 28px; line-height: 1.9; }
+  .word-count-display { font-size: 14px; }
+  
+  /* Better spacing for interactive elements */
+  .form-row { gap: 12px; }
+  .form-check { gap: 10px; margin-top: 14px; }
+  
+  /* Modal footer buttons */
+  .modal-footer { gap: 10px; padding: 18px 20px; }
+  
+  /* Improve touch areas for small interactive elements */
+  .modal-close { padding: 6px; font-size: 20px; }
+  .kanban-add-btn { padding: 10px; font-size: 13px; }
+  
+  /* Improved list spacing */
+  .goals-list { gap: 14px; }
+  .scenes-list { gap: 10px; }
+  .timeline-list { gap: 2px; }
+  .magic-item-list { gap: 14px; }
+  
+  /* Tag and badge improvements */
+  .ticket-badges { gap: 6px; }
+  .ticket-tags { gap: 4px; }
+  .entity-tags { gap: 6px; }
+  .magic-card-tags { gap: 8px; }
+  
+  /* Improve dropdown and menu spacing */
+  .export-menu button { padding: 10px 14px; font-size: 14px; }
+  .export-menu-section-label { padding: 8px 14px 4px; font-size: 11px; }
+}
+
+/* Tablet Portrait (768px max) */
 @media (max-width: 768px) {
   .sidebar { width: 180px; }
   .kanban-board { grid-template-columns: repeat(3, 1fr); }
@@ -488,11 +595,30 @@ textarea { resize: none; overflow-y: hidden; }
   .modal-cols { grid-template-columns: 1fr; }
   .map-builder-layout { grid-template-columns: 1fr; }
   .main-content { padding: 20px 32px 20px 28px; }
+  
+  /* Better button sizing for smaller tablets */
+  .btn { padding: 9px 16px; font-size: 13px; }
+  .btn-sm { padding: 5px 11px; font-size: 12px; }
+  
+  /* Improve form elements */
+  .input, textarea, select { padding: 9px 12px; font-size: 13px; }
+  
+  /* Adjust grid for smaller tablets */
+  .cards-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+  .achievements-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+  .magic-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
 }
+
+/* Mobile (480px and below) */
 @media (max-width: 480px) {
   .sidebar { display: none; }
   .kanban-board { grid-template-columns: repeat(2, 1fr); }
   .main-content { padding: 16px 16px 16px 16px; }
+  
+  /* Optimize for small screens */
+  .app-header { padding: 0 12px; height: 52px; }
+  .btn { padding: 8px 14px; font-size: 12px; }
+  .input, textarea, select { padding: 8px 10px; font-size: 12px; }
 }
 
 
