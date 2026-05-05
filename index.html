@@ -2275,7 +2275,20 @@ mark.rte-find-mark-active {
 .workbook-callout { background: #1a1730; border: 1px solid #2d2a4a; border-radius: 10px; padding: 14px 16px; margin-bottom: 20px; color: #c4b5fd; }
 .workbook-callout strong { color: #e9ddff; }
 .workbook-chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
-.workbook-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; background: #1a1730; border: 1px solid #2d2a4a; color: #c4b5fd; font-size: 11px; }
+.workbook-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; background: #1a1730; border: 1px solid #2d2a4a; color: #c4b5fd; font-size: 11px; transition: all 0.2s; }
+.workbook-chip:hover { background: #2d2a4a; border-color: #7c3aed; color: #e2d9f3; }
+.has-tip { cursor: help; position: relative; }
+.has-tip:hover { color: #c4b5fd; }
+.tip-icon { font-size: 10px; opacity: 0.6; margin-left: 4px; vertical-align: middle; }
+.chip-section { font-weight: 700; border-color: #7c3aed; background: rgba(124, 58, 237, 0.1); }
+.chip-field { opacity: 0.9; }
+.workbook-nav-groups { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+.workbook-nav-group { display: flex; flex-direction: column; gap: 8px; }
+.workbook-sub-chips { display: none; flex-wrap: wrap; gap: 6px; padding-left: 20px; border-left: 1px solid #2d2a4a; margin-left: 10px; }
+.workbook-nav-group.expanded .workbook-sub-chips { display: flex; }
+.workbook-nav-group .chip-section { width: fit-content; display: flex; align-items: center; gap: 8px; }
+.workbook-nav-group .chip-section::after { content: '▼'; font-size: 8px; transition: transform 0.2s; opacity: 0.6; }
+.workbook-nav-group.expanded .chip-section::after { transform: rotate(180deg); }
 .workbook-status { font-size: 12px; color: #6b7280; margin-top: 10px; }
 .planning-field textarea.workbook-compact { min-height: 88px; }
 .planning-field textarea.workbook-tall { min-height: 150px; }
@@ -10192,71 +10205,71 @@ const WORKBOOK_PAGE_CONFIG = {
         title: '🎲 Idea Generator & Cross-Pollination',
         desc: 'Cross-pollinate different domains the way the workbook suggests, then combine them into a fresh premise seed.',
         fields: [
-          { key: 'natural_world', label: 'Elements from the natural world', rows: 2, placeholder: 'Weather, terrain, animals, plants, cycles, disasters, seasons...' },
-          { key: 'moral_problem', label: 'Moral questions or problems', rows: 2, placeholder: 'What dilemma or difficult question sits at the heart of the story?' },
-          { key: 'favorite_tropes', label: 'Favorite tropes or story elements', rows: 2, placeholder: 'Enemies to lovers, found family, revenge, prophecy, locked room...' },
-          { key: 'technology_magic', label: 'Technologies, magic, or inventions', rows: 2, placeholder: 'What system, device, power, or innovation makes this story distinctive?' },
-          { key: 'favorite_words', label: 'Favorite words, moods, or concepts', rows: 2, placeholder: 'Atmosphere words, recurring concepts, emotional textures...' },
-          { key: 'combined_concept', label: 'Combined concept', rows: 3, placeholder: 'Mix the ingredients above into one compelling story seed.' }
+          { key: 'natural_world', label: 'Elements from the natural world', rows: 2, placeholder: 'Weather, terrain, animals, plants, cycles, disasters, seasons...', tip: 'Incorporate elements from nature to ground your story and provide unique obstacles or atmosphere.' },
+          { key: 'moral_problem', label: 'Moral questions or problems', rows: 2, placeholder: 'What dilemma or difficult question sits at the heart of the story?', tip: 'The central ethical conflict that challenges your characters and drives the narrative theme.' },
+          { key: 'favorite_tropes', label: 'Favorite tropes or story elements', rows: 2, placeholder: 'Enemies to lovers, found family, revenge, prophecy, locked room...', tip: 'Classic story patterns you love. Use them as a foundation to build something fresh.' },
+          { key: 'technology_magic', label: 'Technologies, magic, or inventions', rows: 2, placeholder: 'What system, device, power, or innovation makes this story distinctive?', tip: 'The unique rules or tools that define your world\'s possibilities and limitations.' },
+          { key: 'favorite_words', label: 'Favorite words, moods, or concepts', rows: 2, placeholder: 'Atmosphere words, recurring concepts, emotional textures...', tip: 'Keywords that capture the aesthetic and emotional essence of your story.' },
+          { key: 'combined_concept', label: 'Combined concept', rows: 3, placeholder: 'Mix the ingredients above into one compelling story seed.', tip: 'The synthesis of your ideas into a single, powerful starting point for your novel.' }
         ]
       },
       {
         title: '🗺️ Mind Map & Idea Sketch',
         desc: 'Capture the major branches the workbook recommends when expanding a story visually.',
         fields: [
-          { key: 'central_idea', label: 'Central idea', rows: 2, placeholder: 'State the central idea in one sentence.' },
-          { key: 'mindmap_characters', label: 'Character branch', rows: 2, placeholder: 'Names, roles, tensions, secrets, relationships...' },
-          { key: 'mindmap_plot', label: 'Plot branch', rows: 2, placeholder: 'Key events, turning points, climax, resolution...' },
-          { key: 'mindmap_setting', label: 'Setting branch', rows: 2, placeholder: 'Location, era, culture, atmosphere, pressures...' },
-          { key: 'mindmap_theme', label: 'Theme branch', rows: 2, placeholder: 'Messages, symbols, motifs, moral questions...' },
-          { key: 'mindmap_conflict', label: 'Conflict branch', rows: 2, placeholder: 'Internal, interpersonal, social, political, environmental conflict...' },
-          { key: 'idea_sketch', label: 'Idea sketch notes', rows: 4, placeholder: 'Freeform visual or descriptive notes about how the idea looks and feels.' }
+          { key: 'central_idea', label: 'Central idea', rows: 2, placeholder: 'State the central idea in one sentence.', tip: 'The core concept of your story expressed as simply as possible.' },
+          { key: 'mindmap_characters', label: 'Character branch', rows: 2, placeholder: 'Names, roles, tensions, secrets, relationships...', tip: 'The people who inhabit your story and the connections between them.' },
+          { key: 'mindmap_plot', label: 'Plot branch', rows: 2, placeholder: 'Key events, turning points, climax, resolution...', tip: 'The sequence of events that form the backbone of your narrative.' },
+          { key: 'mindmap_setting', label: 'Setting branch', rows: 2, placeholder: 'Location, era, culture, atmosphere, pressures...', tip: 'The world where your story takes place and the forces that shape it.' },
+          { key: 'mindmap_theme', label: 'Theme branch', rows: 2, placeholder: 'Messages, symbols, motifs, moral questions...', tip: 'The deeper meanings and recurring elements that give your story significance.' },
+          { key: 'mindmap_conflict', label: 'Conflict branch', rows: 2, placeholder: 'Internal, interpersonal, social, political, environmental conflict...', tip: 'The various levels of opposition that create tension and drive the plot.' },
+          { key: 'idea_sketch', label: 'Idea sketch notes', rows: 4, placeholder: 'Freeform visual or descriptive notes about how the idea looks and feels.', tip: 'A loose, creative space to capture the overall vibe and initial thoughts on your story.' }
         ]
       },
       {
         title: '🎯 Expansion, Genre, and Story Goals',
         desc: 'Turn the spark into a story promise with genre awareness and concrete creative goals.',
         fields: [
-          { key: 'genre_positioning', label: 'Genre and subgenre', rows: 2, placeholder: 'What shelf does this sit on, and what reader expectations matter?' },
-          { key: 'genre_promise', label: 'Genre promise', rows: 2, placeholder: 'What must the story deliver to satisfy the chosen genre?' },
-          { key: 'story_goal_reader', label: 'Reader experience goal', rows: 2, placeholder: 'How should readers feel or what should they remember?' },
-          { key: 'story_goal_writer', label: 'Writer’s creative goal', rows: 2, placeholder: 'What challenge, obsession, or artistic experiment matters to you here?' },
-          { key: 'influences', label: 'Influences and inspiration', rows: 3, placeholder: 'Books, films, songs, people, headlines, myths, memories...' },
-          { key: 'story_components', label: 'Core story components', rows: 3, placeholder: 'Protagonist, desire, opposition, setting pressure, theme, hook...' }
+          { key: 'genre_positioning', label: 'Genre and subgenre', rows: 2, placeholder: 'What shelf does this sit on, and what reader expectations matter?', tip: 'Identify your story\'s category to understand the conventions and expectations of your audience.' },
+          { key: 'genre_promise', label: 'Genre promise', rows: 2, placeholder: 'What must the story deliver to satisfy the chosen genre?', tip: 'The essential elements that readers expect from a story in your chosen genre.' },
+          { key: 'story_goal_reader', label: 'Reader experience goal', rows: 2, placeholder: 'How should readers feel or what should they remember?', tip: 'The emotional impact or lasting impression you want your story to have on the reader.' },
+          { key: 'story_goal_writer', label: 'Writer’s creative goal', rows: 2, placeholder: 'What challenge, obsession, or artistic experiment matters to you here?', tip: 'Your personal motivation and the creative milestones you want to achieve with this project.' },
+          { key: 'influences', label: 'Influences and inspiration', rows: 3, placeholder: 'Books, films, songs, people, headlines, myths, memories...', tip: 'The external sources that have shaped your vision for this story.' },
+          { key: 'story_components', label: 'Core story components', rows: 3, placeholder: 'Protagonist, desire, opposition, setting pressure, theme, hook...', tip: 'The fundamental building blocks that make your story work.' }
         ]
       },
       {
         title: '🌱 Story Seed & Premise Development',
         desc: 'Use the workbook’s seed and premise exercises to define exactly what story you are building.',
         fields: [
-          { key: 'story_seed', label: 'Story seed', rows: 3, placeholder: 'What first image, question, or event started the novel?' },
-          { key: 'what_if', label: 'What if question', rows: 2, placeholder: 'Frame the story as a provocative “What if...?” question.' },
-          { key: 'premise_sentence', label: 'Premise sentence', rows: 3, placeholder: 'Write the core premise in one clear sentence.' },
-          { key: 'logline', label: 'Logline', rows: 3, placeholder: 'Who wants what, what stands in the way, and what happens if they fail?' },
-          { key: 'stakes', label: 'Immediate and ultimate stakes', rows: 3, placeholder: 'What is at risk personally, relationally, socially, or globally?' },
-          { key: 'unique_hook', label: 'Unique hook', rows: 3, placeholder: 'Why this version of the story instead of any other?' }
+          { key: 'story_seed', label: 'Story seed', rows: 3, placeholder: 'What first image, question, or event started the novel?', tip: 'The initial spark or inspiration that led to the creation of this story.' },
+          { key: 'what_if', label: 'What if question', rows: 2, placeholder: 'Frame the story as a provocative “What if...?” question.', tip: 'A hypothetical scenario that serves as the foundation for your story\'s premise.' },
+          { key: 'premise_sentence', label: 'Premise sentence', rows: 3, placeholder: 'Write the core premise in one clear sentence.', tip: 'A concise summary of your story\'s central conflict and setup.' },
+          { key: 'logline', label: 'Logline', rows: 3, placeholder: 'Who wants what, what stands in the way, and what happens if they fail?', tip: 'A one-sentence pitch that captures the essence of your story\'s dramatic arc.' },
+          { key: 'stakes', label: 'Immediate and ultimate stakes', rows: 3, placeholder: 'What is at risk personally, relationally, socially, or globally?', tip: 'The consequences of success or failure for your characters and their world.' },
+          { key: 'unique_hook', label: 'Unique hook', rows: 3, placeholder: 'Why this version of the story instead of any other?', tip: 'The distinctive element that sets your story apart from others with a similar premise.' }
         ]
       },
       {
         title: '🔍 Evaluation, Theme, Symbols, and Metaphors',
         desc: 'Pressure-test the idea and clarify the deeper meanings running through it.',
         fields: [
-          { key: 'evaluation_strength', label: 'Why this idea is strong enough to pursue', rows: 3, placeholder: 'What has energy, durability, and emotional charge?' },
-          { key: 'evaluation_risk', label: 'What still feels weak or uncertain', rows: 3, placeholder: 'What needs development before drafting?' },
-          { key: 'core_theme', label: 'Core theme', rows: 2, placeholder: 'What central idea or argument is the story exploring?' },
-          { key: 'symbols', label: 'Symbols and recurring images', rows: 2, placeholder: 'Objects, colors, places, images, or rituals that can carry meaning.' },
-          { key: 'metaphors', label: 'Metaphors and motifs', rows: 2, placeholder: 'What patterns or metaphoric systems echo the story’s meaning?' },
-          { key: 'big_questions', label: 'Big questions', rows: 3, placeholder: 'What human questions does the novel keep asking?' }
+          { key: 'evaluation_strength', label: 'Why this idea is strong enough to pursue', rows: 3, placeholder: 'What has energy, durability, and emotional charge?', tip: 'The qualities that make your story concept worth the time and effort to write.' },
+          { key: 'evaluation_risk', label: 'What still feels weak or uncertain', rows: 3, placeholder: 'What needs development before drafting?', tip: 'The potential pitfalls or areas of your story that require more thought and planning.' },
+          { key: 'core_theme', label: 'Core theme', rows: 2, placeholder: 'What central idea or argument is the story exploring?', tip: 'The underlying message or philosophical question that your story addresses.' },
+          { key: 'symbols', label: 'Symbols and recurring images', rows: 2, placeholder: 'Objects, colors, places, images, or rituals that can carry meaning.', tip: 'Concrete elements that represent abstract ideas and reinforce your story\'s themes.' },
+          { key: 'metaphors', label: 'Metaphors and motifs', rows: 2, placeholder: 'What patterns or metaphoric systems echo the story’s meaning?', tip: 'Recurring patterns or comparisons that deepen the reader\'s understanding of your story.' },
+          { key: 'big_questions', label: 'Big questions', rows: 3, placeholder: 'What human questions does the novel keep asking?', tip: 'The universal questions about life, morality, and the human condition that your story explores.' }
         ]
       },
       {
         title: '🔥 Creativity Practice, Free Writing, and Prompt Space',
         desc: 'Use this area for the workbook’s creativity-building, free-writing, and writing-prompt exercises.',
         fields: [
-          { key: 'creativity_practice', label: 'Creativity practice to try', rows: 2, placeholder: 'Walk, collage, playlist, timer sprint, observation exercise, research rabbit-hole...' },
-          { key: 'freewriting_session', label: 'Free-writing session', rows: 5, placeholder: 'Write without censoring yourself. Let the subconscious surface story material.' },
-          { key: 'prompt_responses', label: 'Prompt responses', rows: 4, placeholder: 'Answer any story prompts, image prompts, or curiosity questions here.' },
-          { key: 'next_idea_steps', label: 'Next idea steps', rows: 3, placeholder: 'What should you test, research, or outline next?' }
+          { key: 'creativity_practice', label: 'Creativity practice to try', rows: 2, placeholder: 'Walk, collage, playlist, timer sprint, observation exercise, research rabbit-hole...', tip: 'Exercises designed to spark your imagination and generate new ideas.' },
+          { key: 'freewriting_session', label: 'Free-writing session', rows: 5, placeholder: 'Write without censoring yourself. Let the subconscious surface story material.', tip: 'A stream-of-consciousness writing exercise to uncover hidden thoughts and ideas.' },
+          { key: 'prompt_responses', label: 'Prompt responses', rows: 4, placeholder: 'Answer any story prompts, image prompts, or curiosity questions here.', tip: 'Your creative responses to specific prompts or questions.' },
+          { key: 'next_idea_steps', label: 'Next idea steps', rows: 3, placeholder: 'What should you test, research, or outline next?', tip: 'The practical actions you will take to further develop your story concept.' }
         ]
       }
     ]
@@ -10271,58 +10284,58 @@ const WORKBOOK_PAGE_CONFIG = {
         title: '🧾 Character Foundation',
         desc: 'Cover the essentials from the character checklist, roles, and sketch pages.',
         fields: [
-          { key: 'char_name_role', label: 'Primary character and narrative role', rows: 2, placeholder: 'Who are you focusing on, and what role do they play in the story?' },
-          { key: 'char_surface', label: 'Surface presentation', rows: 2, placeholder: 'How do they appear to others?' },
-          { key: 'char_inner_truth', label: 'Private truth', rows: 2, placeholder: 'What is true about them beneath the surface?' },
-          { key: 'char_desire', label: 'Conscious desire', rows: 2, placeholder: 'What do they want on the page?' },
-          { key: 'char_need', label: 'Deep need', rows: 2, placeholder: 'What do they actually need to grow?' },
-          { key: 'char_contradiction', label: 'Core contradiction', rows: 2, placeholder: 'What contradiction makes them feel human and interesting?' }
+          { key: 'char_name_role', label: 'Primary character and narrative role', rows: 2, placeholder: 'Who are you focusing on, and what role do they play in the story?', tip: 'Define the character\'s name and their function in the narrative (e.g., Protagonist, Antagonist, Mentor, Foil).' },
+          { key: 'char_surface', label: 'Surface presentation', rows: 2, placeholder: 'How do they appear to others?', tip: 'The mask the character wears in public. Their behavior, appearance, and the persona they project to the world.' },
+          { key: 'char_inner_truth', label: 'Private truth', rows: 2, placeholder: 'What is true about them beneath the surface?', tip: 'The internal reality of the character that they hide from the world. This often contradicts their surface presentation.' },
+          { key: 'char_desire', label: 'Conscious desire', rows: 2, placeholder: 'What do they want on the page?', tip: 'The goal the character is actively pursuing. This is what they THINK they want.' },
+          { key: 'char_need', label: 'Deep need', rows: 2, placeholder: 'What do they actually need to grow?', tip: 'The internal growth or realization required for the character to become whole. Often at odds with their conscious desire.' },
+          { key: 'char_contradiction', label: 'Core contradiction', rows: 2, placeholder: 'What contradiction makes them feel human and interesting?', tip: 'The internal conflict or opposing traits that make a character feel complex and realistic (e.g., a brave coward, a cruel saint).' }
         ]
       },
       {
         title: '🌀 Arc, Misbelief, and Transformation',
         desc: 'Track what must change inside the character across the novel.',
         fields: [
-          { key: 'char_wound', label: 'Wound / ghost / formative pain', rows: 3, placeholder: 'What past event shaped how they see the world?' },
-          { key: 'char_misbelief', label: 'Misbelief', rows: 3, placeholder: 'What false idea about self, others, or the world do they live by?' },
-          { key: 'char_start_state', label: 'Beginning state', rows: 2, placeholder: 'How do they behave and cope at the start?' },
-          { key: 'char_turning_points', label: 'Turning points in growth', rows: 3, placeholder: 'Which scenes force them to confront their misbelief?' },
-          { key: 'char_end_state', label: 'Ending state', rows: 2, placeholder: 'Who are they by the end of the novel?' },
-          { key: 'char_arc_summary', label: 'Arc summary', rows: 3, placeholder: 'Describe the full emotional and moral journey in a paragraph.' }
+          { key: 'char_wound', label: 'Wound / ghost / formative pain', rows: 3, placeholder: 'What past event shaped how they see the world?', tip: 'The traumatic event or deep-seated pain that influences the character\'s worldview and actions.' },
+          { key: 'char_misbelief', label: 'Misbelief', rows: 3, placeholder: 'What false idea about self, others, or the world do they live by?', tip: 'The incorrect belief the character holds that prevents them from achieving their deep need.' },
+          { key: 'char_start_state', label: 'Beginning state', rows: 2, placeholder: 'How do they behave and cope at the start?', tip: 'The character\'s initial behavior and coping mechanisms before their journey begins.' },
+          { key: 'char_turning_points', label: 'Turning points in growth', rows: 3, placeholder: 'Which scenes force them to confront their misbelief?', tip: 'Key moments in the story that challenge the character\'s misbelief and force them to change.' },
+          { key: 'char_end_state', label: 'Ending state', rows: 2, placeholder: 'Who are they by the end of the novel?', tip: 'The character\'s final state after their growth and transformation.' },
+          { key: 'char_arc_summary', label: 'Arc summary', rows: 3, placeholder: 'Describe the full emotional and moral journey in a paragraph.', tip: 'A concise summary of the character\'s entire emotional and moral development.' }
         ]
       },
       {
         title: '🧱 Character Outline Pack',
         desc: 'Use these large fields as compact stand-ins for the workbook’s outline pages.',
         fields: [
-          { key: 'main_character_outline', label: 'Main character outline', rows: 5, placeholder: 'Identity, want, need, fear, strengths, flaws, voice, turning points, endpoint...' },
-          { key: 'antagonist_outline', label: 'Antagonist outline', rows: 5, placeholder: 'Goal, worldview, methods, pressure, blind spots, how they challenge the protagonist...' },
-          { key: 'supporting_outline', label: 'Supporting character outline', rows: 5, placeholder: 'Who supports, complicates, tempts, mentors, mirrors, or betrays the protagonist?' },
-          { key: 'minor_outline', label: 'Minor character outline', rows: 4, placeholder: 'Small but useful characters, signature details, and plot function.' }
+          { key: 'main_character_outline', label: 'Main character outline', rows: 5, placeholder: 'Identity, want, need, fear, strengths, flaws, voice, turning points, endpoint...', tip: 'A comprehensive overview of the main character\'s key traits and journey.' },
+          { key: 'antagonist_outline', label: 'Antagonist outline', rows: 5, placeholder: 'Goal, worldview, methods, pressure, blind spots, how they challenge the protagonist...', tip: 'A detailed look at the antagonist\'s motivations and how they oppose the protagonist.' },
+          { key: 'supporting_outline', label: 'Supporting character outline', rows: 5, placeholder: 'Who supports, complicates, tempts, mentors, mirrors, or betrays the protagonist?', tip: 'An outline of the supporting characters and their roles in the protagonist\'s journey.' },
+          { key: 'minor_outline', label: 'Minor character outline', rows: 4, placeholder: 'Small but useful characters, signature details, and plot function.', tip: 'Brief notes on minor characters and their specific functions in the story.' }
         ]
       },
       {
         title: '🤝 Relationships and Emotional Through Line',
         desc: 'Bring together the workbook’s relationship dynamics, believable relationship prompts, and emotional through-line work.',
         fields: [
-          { key: 'key_relationships', label: 'Key relationships', rows: 3, placeholder: 'Which relationships matter most to the story and why?' },
-          { key: 'relationship_dynamic', label: 'Relationship dynamics', rows: 3, placeholder: 'Power balance, attraction, resentment, dependency, trust, rivalry...' },
-          { key: 'relationship_conflict', label: 'Relational conflict pattern', rows: 3, placeholder: 'How do these characters hurt, challenge, rescue, or reveal each other?' },
-          { key: 'emotional_throughline', label: 'Emotional through line', rows: 4, placeholder: 'What emotional pattern follows this character across the book?' },
-          { key: 'relationship_turning_point', label: 'Relationship turning point', rows: 3, placeholder: 'Which moment changes the relationship permanently?' },
-          { key: 'believability_notes', label: 'Believability notes', rows: 3, placeholder: 'What habits, history, details, and contradictions make the relationship feel real?' }
+          { key: 'key_relationships', label: 'Key relationships', rows: 3, placeholder: 'Which relationships matter most to the story and why?', tip: 'Identify the most significant connections between characters and their impact on the narrative.' },
+          { key: 'relationship_dynamic', label: 'Relationship dynamics', rows: 3, placeholder: 'Power balance, attraction, resentment, dependency, trust, rivalry...', tip: 'The underlying forces and tensions that define how characters interact with each other.' },
+          { key: 'relationship_conflict', label: 'Relational conflict pattern', rows: 3, placeholder: 'How do these characters hurt, challenge, rescue, or reveal each other?', tip: 'The recurring ways in which characters clash or support each other.' },
+          { key: 'emotional_throughline', label: 'Emotional through line', rows: 4, placeholder: 'What emotional pattern follows this character across the book?', tip: 'The consistent emotional journey or theme that defines a character\'s experience.' },
+          { key: 'relationship_turning_point', label: 'Relationship turning point', rows: 3, placeholder: 'Which moment changes the relationship permanently?', tip: 'A pivotal event that fundamentally alters the connection between two characters.' },
+          { key: 'believability_notes', label: 'Believability notes', rows: 3, placeholder: 'What habits, history, details, and contradictions make the relationship feel real?', tip: 'The specific details and nuances that make a relationship feel authentic and grounded.' }
         ]
       },
       {
         title: '🧠 Archetypes, Traits, Flaws, and Fresh Ideas',
         desc: 'Use archetypes carefully, then add specificity through traits, flaws, strengths, and voice details.',
         fields: [
-          { key: 'char_archetype', label: 'Archetype or story function', rows: 2, placeholder: 'What pattern or role do they echo, and how will you individualize it?' },
-          { key: 'positive_traits', label: 'Positive traits', rows: 2, placeholder: 'Competence, tenderness, discipline, humor, insight...' },
-          { key: 'flaws', label: 'Flaws and liabilities', rows: 2, placeholder: 'Pride, avoidance, recklessness, insecurity, rigidity...' },
-          { key: 'personality_prompts', label: 'Personality notes', rows: 3, placeholder: 'Mannerisms, tastes, routines, speech quirks, fears, pleasures...' },
-          { key: 'fresh_character_ideas', label: 'Fresh character ideas', rows: 3, placeholder: 'Unexpected details or contradictions that make the character memorable.' },
-          { key: 'voice_tags', label: 'Voice signatures', rows: 2, placeholder: 'Favorite phrases, rhythms, references, silences, deflections...' }
+          { key: 'char_archetype', label: 'Archetype or story function', rows: 2, placeholder: 'What pattern or role do they echo, and how will you individualize it?', tip: 'The universal character pattern your character fits into and how you will make them unique.' },
+          { key: 'positive_traits', label: 'Positive traits', rows: 2, placeholder: 'Competence, tenderness, discipline, humor, insight...', tip: 'The character\'s strengths and admirable qualities.' },
+          { key: 'flaws', label: 'Flaws and liabilities', rows: 2, placeholder: 'Pride, avoidance, recklessness, insecurity, rigidity...', tip: 'The character\'s weaknesses and the traits that lead to their downfall or conflict.' },
+          { key: 'personality_prompts', label: 'Personality notes', rows: 3, placeholder: 'Mannerisms, tastes, routines, speech quirks, fears, pleasures...', tip: 'The specific details that make a character\'s personality feel distinct and alive.' },
+          { key: 'fresh_character_ideas', label: 'Fresh character ideas', rows: 3, placeholder: 'Unexpected details or contradictions that make the character memorable.', tip: 'Unique and surprising elements that make your character stand out.' },
+          { key: 'voice_tags', label: 'Voice signatures', rows: 2, placeholder: 'Favorite phrases, rhythms, references, silences, deflections...', tip: 'The specific speech patterns and habits that define a character\'s unique voice.' }
         ]
       }
     ]
@@ -10337,8 +10350,8 @@ const WORKBOOK_PAGE_CONFIG = {
         title: '🏛️ Story Architecture',
         desc: 'Choose the structural frame that best fits this story, then outline the movement from opening to ending.',
         fields: [
-          { key: 'plot_structure', label: 'Chosen plot structure', rows: 2, placeholder: 'Three-act, hero’s journey, mystery spiral, braided structure, nonlinear...' },
-          { key: 'plot_archetype', label: 'Plot archetype', rows: 2, placeholder: 'Quest, revenge, transformation, fall, escape, return, survival...' },
+          { key: 'plot_structure', label: 'Chosen plot structure', rows: 2, placeholder: 'Three-act, hero’s journey, mystery spiral, braided structure, nonlinear...', tip: 'The framework used to organize the story events (e.g., Three-Act Structure, Hero\'s Journey).' },
+          { key: 'plot_archetype', label: 'Plot archetype', rows: 2, placeholder: 'Quest, revenge, transformation, fall, escape, return, survival...', tip: 'The universal story pattern your plot follows (e.g., Overcoming the Monster, Rags to Riches).' },
           { key: 'plot_building_prompt', label: 'Plot-building prompt answer', rows: 3, placeholder: 'What chain of cause and effect gives the story momentum?' },
           { key: 'outline_overview', label: 'Novel outline overview', rows: 4, placeholder: 'Summarize the beginning, middle, and ending in prose.' },
           { key: 'key_questions', label: 'Key plot questions', rows: 3, placeholder: 'What mysteries, uncertainties, or promises keep the reader turning pages?' },
@@ -10420,58 +10433,58 @@ const WORKBOOK_PAGE_CONFIG = {
         title: '🎬 Scene Engine',
         desc: 'Use this in tandem with Scenes & Plot to sharpen dramatic movement on the page.',
         fields: [
-          { key: 'compelling_scene', label: 'What makes a compelling scene in this novel?', rows: 3, placeholder: 'Conflict, reversal, emotional shift, revelation, decision...' },
-          { key: 'scene_structure', label: 'Preferred scene structure and pacing', rows: 3, placeholder: 'How should scenes open, escalate, pivot, and close?' },
-          { key: 'scene_template', label: 'Scene template', rows: 4, placeholder: 'Goal, conflict, complication, turn, aftermath, unanswered question...' },
-          { key: 'scene_review', label: 'Scene review prompts', rows: 3, placeholder: 'How will you evaluate whether a scene earns its place?' },
-          { key: 'opening_scene', label: 'Opening scene prompts', rows: 3, placeholder: 'What must the first scene establish, withhold, and promise?' },
-          { key: 'ending_scene', label: 'Satisfying ending prompts', rows: 3, placeholder: 'What emotional, thematic, and plot notes should the ending resolve?' },
-          { key: 'flat_scene_fix', label: 'How to fix flat scenes', rows: 3, placeholder: 'What kinds of pressure, specificity, or change would wake a weak scene up?' }
+          { key: 'compelling_scene', label: 'What makes a compelling scene in this novel?', rows: 3, placeholder: 'Conflict, reversal, emotional shift, revelation, decision...', tip: 'The essential elements that make a scene engaging and necessary for the story.' },
+          { key: 'scene_structure', label: 'Preferred scene structure and pacing', rows: 3, placeholder: 'How should scenes open, escalate, pivot, and close?', tip: 'Your chosen framework for organizing the dramatic movement within a scene.' },
+          { key: 'scene_template', label: 'Scene template', rows: 4, placeholder: 'Goal, conflict, complication, turn, aftermath, unanswered question...', tip: 'A reusable structure for planning individual scenes.' },
+          { key: 'scene_review', label: 'Scene review prompts', rows: 3, placeholder: 'How will you evaluate whether a scene earns its place?', tip: 'Questions to ask yourself when reviewing a scene to ensure it serves the story.' },
+          { key: 'opening_scene', label: 'Opening scene prompts', rows: 3, placeholder: 'What must the first scene establish, withhold, and promise?', tip: 'The specific goals and requirements for your story\'s opening scene.' },
+          { key: 'ending_scene', label: 'Satisfying ending prompts', rows: 3, placeholder: 'What emotional, thematic, and plot notes should the ending resolve?', tip: 'The essential elements that will make your story\'s ending feel complete and satisfying.' },
+          { key: 'flat_scene_fix', label: 'How to fix flat scenes', rows: 3, placeholder: 'What kinds of pressure, specificity, or change would wake a weak scene up?', tip: 'Strategies for improving scenes that lack tension or impact.' }
         ]
       },
       {
         title: '💬 Dialogue Workbook',
         desc: 'Give major speakers distinct rhythms, motives, evasions, and conversational pressure.',
         fields: [
-          { key: 'dialogue_quality', label: 'What makes dialogue convincing in this novel?', rows: 3, placeholder: 'Compression, tension, subtext, asymmetry, voice, interruption...' },
-          { key: 'dialogue_profiles', label: 'Dialogue profiles', rows: 4, placeholder: 'How does each major character speak differently?' },
-          { key: 'dialogue_checklist', label: 'Dialogue checklist', rows: 3, placeholder: 'What should you test when revising dialogue?' },
-          { key: 'subtext_notes', label: 'Subtext notes', rows: 3, placeholder: 'What do characters avoid saying directly?' },
-          { key: 'speech_tags', label: 'Speech habits and quirks', rows: 2, placeholder: 'Cadence, favorite phrases, hedging, sarcasm, directness...' }
+          { key: 'dialogue_quality', label: 'What makes dialogue convincing in this novel?', rows: 3, placeholder: 'Compression, tension, subtext, asymmetry, voice, interruption...', tip: 'The qualities that make the dialogue in your story feel authentic and effective.' },
+          { key: 'dialogue_profiles', label: 'Dialogue profiles', rows: 4, placeholder: 'How does each major character speak differently?', tip: 'Detailed notes on the unique speech patterns and habits of your major characters.' },
+          { key: 'dialogue_checklist', label: 'Dialogue checklist', rows: 3, placeholder: 'What should you test when revising dialogue?', tip: 'A list of criteria to ensure your dialogue is sharp, purposeful, and character-driven.' },
+          { key: 'subtext_notes', label: 'Subtext notes', rows: 3, placeholder: 'What do characters avoid saying directly?', tip: 'The underlying meanings and emotions that characters hide in their dialogue.' },
+          { key: 'speech_tags', label: 'Speech habits and quirks', rows: 2, placeholder: 'Cadence, favorite phrases, hedging, sarcasm, directness...', tip: 'The specific verbal habits and tics that define a character\'s voice.' }
         ]
       },
       {
         title: '✍️ Prose, Exposition, and Description',
         desc: 'Clarify how your prose should sound and how much exposition or description the story can carry.',
         fields: [
-          { key: 'prose_style', label: 'Prose style target', rows: 3, placeholder: 'Lyrical, spare, intimate, sharp, comic, restrained, maximalist...' },
-          { key: 'exposition_strategy', label: 'Exposition strategy', rows: 3, placeholder: 'How will you deliver background without stalling momentum?' },
-          { key: 'description_strategy', label: 'Description strategy', rows: 3, placeholder: 'What details matter most when grounding the reader?' },
-          { key: 'show_dont_tell', label: 'Show, don’t tell reminders', rows: 3, placeholder: 'Where can action, image, and implication replace explanation?' },
-          { key: 'texture_notes', label: 'Texture and specificity notes', rows: 3, placeholder: 'What concrete details make the world feel inhabited?' }
+          { key: 'prose_style', label: 'Prose style target', rows: 3, placeholder: 'Lyrical, spare, intimate, sharp, comic, restrained, maximalist...', tip: 'The overall aesthetic and tone of your story\'s writing.' },
+          { key: 'exposition_strategy', label: 'Exposition strategy', rows: 3, placeholder: 'How will you deliver background without stalling momentum?', tip: 'Your plan for providing necessary information to the reader without slowing down the plot.' },
+          { key: 'description_strategy', label: 'Description strategy', rows: 3, placeholder: 'What details matter most when grounding the reader?', tip: 'Your approach to using concrete details to create a vivid and immersive story world.' },
+          { key: 'show_dont_tell', label: 'Show, don’t tell reminders', rows: 3, placeholder: 'Where can action, image, and implication replace explanation?', tip: 'Specific ways you will dramatize your story rather than just explaining it.' },
+          { key: 'texture_notes', label: 'Texture and specificity notes', rows: 3, placeholder: 'What concrete details make the world feel inhabited?', tip: 'The small, specific details that make your story world feel real and lived-in.' }
         ]
       },
       {
         title: '👁️ Sensory Detail, Mood, Emotion, and Theme',
         desc: 'Use this area for the workbook’s mood, emotion, theme, and emotional texture prompts.',
         fields: [
-          { key: 'sensory_bank', label: 'Sensory detail bank', rows: 4, placeholder: 'Sight, sound, smell, texture, taste, temperature, pressure...' },
-          { key: 'emotion_thesaurus', label: 'Emotion cues and body language', rows: 3, placeholder: 'How do your characters physically express feeling?' },
-          { key: 'mood_strategy', label: 'Mood strategy', rows: 3, placeholder: 'What moods dominate the story, and how do you create them?' },
-          { key: 'emotion_strategy', label: 'Developing emotion', rows: 3, placeholder: 'How do scenes build and release feeling?' },
-          { key: 'theme_integration', label: 'Integrating theme', rows: 3, placeholder: 'How does theme emerge through action, image, setting, and choice?' }
+          { key: 'sensory_bank', label: 'Sensory detail bank', rows: 4, placeholder: 'Sight, sound, smell, texture, taste, temperature, pressure...', tip: 'A collection of sensory details to use when grounding your scenes.' },
+          { key: 'emotion_thesaurus', label: 'Emotion cues and body language', rows: 3, placeholder: 'How do your characters physically express feeling?', tip: 'The physical signs and behaviors that reveal a character\'s emotional state.' },
+          { key: 'mood_strategy', label: 'Mood strategy', rows: 3, placeholder: 'What moods dominate the story, and how do you create them?', tip: 'Your plan for establishing and maintaining the emotional atmosphere of your story.' },
+          { key: 'emotion_strategy', label: 'Developing emotion', rows: 3, placeholder: 'How do scenes build and release feeling?', tip: 'Your approach to creating and managing emotional impact throughout the narrative.' },
+          { key: 'theme_integration', label: 'Integrating theme', rows: 3, placeholder: 'How does theme emerge through action, image, setting, and choice?', tip: 'The ways in which your story\'s deeper meanings are woven into the narrative.' }
         ]
       },
       {
         title: '🧭 POV and Narrative Voice',
         desc: 'Clarify point of view, voice scale, and the language habits you want to avoid or emphasize.',
         fields: [
-          { key: 'pov_choice', label: 'POV choice', rows: 2, placeholder: 'First person, close third, rotating third, dual POV, omniscient...' },
-          { key: 'narrative_voice', label: 'Narrative voice', rows: 3, placeholder: 'What is the narrator’s texture, distance, intelligence, bias, humor, and intimacy?' },
-          { key: 'big_little_voice', label: 'Big voice / little voice', rows: 3, placeholder: 'What is the broad stylistic voice of the book, and what is intimate line-level voice?' },
-          { key: 'filter_words', label: 'Filter words to watch', rows: 2, placeholder: 'Saw, felt, noticed, realized, thought, heard...' },
-          { key: 'voice_prompts', label: 'Narrative voice prompts', rows: 3, placeholder: 'How would this story sound only in your voice?' },
-          { key: 'pov_questionnaire', label: 'POV questionnaire notes', rows: 4, placeholder: 'What can this narrator perceive, misunderstand, reveal, hide, or distort?' }
+          { key: 'pov_choice', label: 'POV choice', rows: 2, placeholder: 'First person, close third, rotating third, dual POV, omniscient...', tip: 'The perspective from which your story is told and the impact it has on the narrative.' },
+          { key: 'narrative_voice', label: 'Narrative voice', rows: 3, placeholder: 'What is the narrator’s texture, distance, intelligence, bias, humor, and intimacy?', tip: 'The unique personality and tone of your story\'s narrator.' },
+          { key: 'big_little_voice', label: 'Big voice / little voice', rows: 3, placeholder: 'What is the broad stylistic voice of the book, and what is intimate line-level voice?', tip: 'The distinction between the overall style of the book and the specific voice of individual scenes or characters.' },
+          { key: 'filter_words', label: 'Filter words to watch', rows: 2, placeholder: 'Saw, felt, noticed, realized, thought, heard...', tip: 'Words that can create distance between the reader and the character\'s experience.' },
+          { key: 'voice_prompts', label: 'Narrative voice prompts', rows: 3, placeholder: 'How would this story sound only in your voice?', tip: 'Exercises to help you find and refine your unique narrative voice.' },
+          { key: 'pov_questionnaire', label: 'POV questionnaire notes', rows: 4, placeholder: 'What can this narrator perceive, misunderstand, reveal, hide, or distort?', tip: 'Detailed notes on the limitations and possibilities of your chosen point of view.' }
         ]
       },
       {
@@ -10494,50 +10507,50 @@ const WORKBOOK_PAGE_CONFIG = {
         title: '🗺️ Setting Overview',
         desc: 'Define the physical, social, and emotional frame around the story.',
         fields: [
-          { key: 'setting_list', label: 'Setting list', rows: 3, placeholder: 'All major locations, environments, institutions, routes, and recurring spaces.' },
-          { key: 'setting_overview', label: 'Setting overview', rows: 4, placeholder: 'Where and when does the story happen, and what makes that world distinct?' },
-          { key: 'setting_pressure', label: 'How setting enhances story', rows: 3, placeholder: 'How does the setting create obstacles, opportunities, stakes, or transformation?' },
-          { key: 'setting_character', label: 'Setting as character', rows: 3, placeholder: 'How does the setting behave like an active force?' },
-          { key: 'setting_change', label: 'How the setting changes', rows: 2, placeholder: 'Does the world shift over the course of the story?' }
+          { key: 'setting_list', label: 'Setting list', rows: 3, placeholder: 'All major locations, environments, institutions, routes, and recurring spaces.', tip: 'A comprehensive list of all significant places in your story.' },
+          { key: 'setting_overview', label: 'Setting overview', rows: 4, placeholder: 'Where and when does the story happen, and what makes that world distinct?', tip: 'A general description of your story\'s time and place.' },
+          { key: 'setting_pressure', label: 'How setting enhances story', rows: 3, placeholder: 'How does the setting create obstacles, opportunities, stakes, or transformation?', tip: 'The ways in which the environment actively influences the plot and characters.' },
+          { key: 'setting_character', label: 'Setting as character', rows: 3, placeholder: 'How does the setting behave like an active force?', tip: 'Treating the environment as a dynamic entity with its own personality and impact.' },
+          { key: 'setting_change', label: 'How the setting changes', rows: 2, placeholder: 'Does the world shift over the course of the story?', tip: 'The evolution of the story world and its impact on the narrative.' }
         ]
       },
       {
         title: '🌫️ Mood, Atmosphere, and Theme',
         desc: 'Make the setting carry emotional and thematic meaning rather than existing as neutral backdrop.',
         fields: [
-          { key: 'mood_atmosphere', label: 'Mood and atmosphere', rows: 3, placeholder: 'What emotional weather governs the story world?' },
-          { key: 'thematic_elements', label: 'Thematic elements in setting', rows: 3, placeholder: 'Which places, objects, or recurring environmental details carry theme?' },
-          { key: 'symbolic_places', label: 'Symbolic places', rows: 3, placeholder: 'Which locations embody conflict, desire, danger, or transformation?' },
-          { key: 'social_rules', label: 'Social and cultural rules', rows: 3, placeholder: 'Norms, pressures, taboos, class systems, rituals...' }
+          { key: 'mood_atmosphere', label: 'Mood and atmosphere', rows: 3, placeholder: 'What emotional weather governs the story world?', tip: 'The overall emotional tone and feeling of your story\'s environment.' },
+          { key: 'thematic_elements', label: 'Thematic elements in setting', rows: 3, placeholder: 'Which places, objects, or recurring environmental details carry theme?', tip: 'Specific environmental details that reinforce your story\'s deeper meanings.' },
+          { key: 'symbolic_places', label: 'Symbolic places', rows: 3, placeholder: 'Which locations embody conflict, desire, danger, or transformation?', tip: 'Places that represent abstract ideas and emotional states.' },
+          { key: 'social_rules', label: 'Social and cultural rules', rows: 3, placeholder: 'Norms, pressures, taboos, class systems, rituals...', tip: 'The unwritten rules and expectations that govern behavior in your story world.' }
         ]
       },
       {
         title: '🧱 Worldbuilding Checklist',
         desc: 'Use this as a compact replacement for the workbook’s setting checklist and worldbuilding prompts.',
         fields: [
-          { key: 'history_politics', label: 'History, politics, and power', rows: 3, placeholder: 'What histories and power structures shape the story?' },
-          { key: 'economy_daily_life', label: 'Economy and daily life', rows: 3, placeholder: 'Work, money, class, trade, domestic routines, scarcity...' },
-          { key: 'belief_systems', label: 'Belief systems and values', rows: 3, placeholder: 'Religion, ideology, ethics, customs, myths...' },
-          { key: 'technology_infrastructure', label: 'Technology / infrastructure', rows: 3, placeholder: 'Transport, communication, medicine, tools, weapons, institutions...' },
-          { key: 'worldbuilding_gaps', label: 'Open worldbuilding questions', rows: 3, placeholder: 'What must be decided before drafting continues?' }
+          { key: 'history_politics', label: 'History, politics, and power', rows: 3, placeholder: 'What histories and power structures shape the story?', tip: 'The background events and systems of authority that define your world.' },
+          { key: 'economy_daily_life', label: 'Economy and daily life', rows: 3, placeholder: 'Work, money, class, trade, domestic routines, scarcity...', tip: 'The practical realities of life for the people in your story world.' },
+          { key: 'belief_systems', label: 'Belief systems and values', rows: 3, placeholder: 'Religion, ideology, ethics, customs, myths...', tip: 'The core beliefs and values that shape the culture of your world.' },
+          { key: 'technology_infrastructure', label: 'Technology / infrastructure', rows: 3, placeholder: 'Transport, communication, medicine, tools, weapons, institutions...', tip: 'The tools and systems that support life and activity in your world.' },
+          { key: 'worldbuilding_gaps', label: 'Open worldbuilding questions', rows: 3, placeholder: 'What must be decided before drafting continues?', tip: 'Identify any remaining uncertainties about your story world that need to be resolved.' }
         ]
       },
       {
         title: '✨ Magic Mechanics and Special Systems',
         desc: 'Use this area for the workbook’s magic-mechanics prompts or any equivalent special systems in the story.',
         fields: [
-          { key: 'magic_source', label: 'Source of power or system logic', rows: 3, placeholder: 'Where does it come from and how does it work?' },
-          { key: 'magic_limits', label: 'Rules, costs, and limits', rows: 3, placeholder: 'What keeps the system from solving every problem?' },
-          { key: 'magic_consequences', label: 'Consequences and risks', rows: 3, placeholder: 'What goes wrong when the system is used?' },
-          { key: 'magic_culture', label: 'Cultural impact', rows: 3, placeholder: 'How does society respond to, regulate, fear, or worship the system?' },
-          { key: 'special_system_notes', label: 'Special system notes', rows: 3, placeholder: 'Any other mechanics, inventions, structures, or environmental rules.' }
+          { key: 'magic_source', label: 'Source of power or system logic', rows: 3, placeholder: 'Where does it come from and how does it work?', tip: 'The origin and fundamental rules of your world\'s special systems.' },
+          { key: 'magic_limits', label: 'Rules, costs, and limits', rows: 3, placeholder: 'What keeps the system from solving every problem?', tip: 'The constraints and consequences that prevent your special systems from being too powerful.' },
+          { key: 'magic_consequences', label: 'Consequences and risks', rows: 3, placeholder: 'What goes wrong when the system is used?', tip: 'The potential dangers and negative outcomes of using your world\'s special systems.' },
+          { key: 'magic_culture', label: 'Cultural impact', rows: 3, placeholder: 'How does society respond to, regulate, fear, or worship the system?', tip: 'The ways in which the existence of special systems shapes the culture and society of your world.' },
+          { key: 'special_system_notes', label: 'Special system notes', rows: 3, placeholder: 'Any other mechanics, inventions, structures, or environmental rules.', tip: 'Additional details and notes on your world\'s unique systems.' }
         ]
       },
       {
         title: '💡 Setting Idea Bank',
         desc: 'Capture setting sparks before they vanish.',
         fields: [
-          { key: 'setting_ideas', label: 'Setting ideas', rows: 5, placeholder: 'Fragments, aesthetics, places, social textures, maps, weather, and sensory cues.' }
+          { key: 'setting_ideas', label: 'Setting ideas', rows: 5, placeholder: 'Fragments, aesthetics, places, social textures, maps, weather, and sensory cues.', tip: 'A space for loose, creative ideas and inspirations for your story\'s setting.' }
         ]
       }
     ]
@@ -10552,31 +10565,31 @@ const WORKBOOK_PAGE_CONFIG = {
         title: '⏱️ Habits, Routine, and Drafting Conditions',
         desc: 'Define the practical conditions that let you write consistently.',
         fields: [
-          { key: 'writing_routine', label: 'Writing routine', rows: 3, placeholder: 'When, where, and how do you write best?' },
-          { key: 'session_structure', label: 'Session structure', rows: 3, placeholder: 'Warm-up, drafting block, break, revision pass, shutdown routine...' },
-          { key: 'writing_supports', label: 'Supports and safeguards', rows: 3, placeholder: 'Music, timers, accountability, snacks, no-phone window, browser blocker...' },
-          { key: 'recurring_blockers', label: 'Recurring blockers', rows: 3, placeholder: 'What tends to derail writing sessions?' },
-          { key: 'block_solutions', label: 'Countermeasures', rows: 3, placeholder: 'What specific response helps when you hit those blockers?' }
+          { key: 'writing_routine', label: 'Writing routine', rows: 3, placeholder: 'When, where, and how do you write best?', tip: 'Your ideal environment and schedule for productive writing.' },
+          { key: 'session_structure', label: 'Session structure', rows: 3, placeholder: 'Warm-up, drafting block, break, revision pass, shutdown routine...', tip: 'The specific steps you take during a writing session to maintain focus and momentum.' },
+          { key: 'writing_supports', label: 'Supports and safeguards', rows: 3, placeholder: 'Music, timers, accountability, snacks, no-phone window, browser blocker...', tip: 'The tools and habits that help you stay on track and avoid distractions.' },
+          { key: 'recurring_blockers', label: 'Recurring blockers', rows: 3, placeholder: 'What tends to derail writing sessions?', tip: 'Identify the common obstacles that prevent you from writing consistently.' },
+          { key: 'block_solutions', label: 'Countermeasures', rows: 3, placeholder: 'What specific response helps when you hit those blockers?', tip: 'Your plan for overcoming the identified obstacles and getting back to writing.' }
         ]
       },
       {
         title: '🏁 Completing the Manuscript',
         desc: 'Break the full novel into an achievable drafting path.',
         fields: [
-          { key: 'completion_definition', label: 'What “complete draft” means', rows: 3, placeholder: 'What standard counts as “finished enough” for draft one?' },
-          { key: 'manuscript_plan', label: 'Completion plan', rows: 4, placeholder: 'How will you move from current state to a completed manuscript?' },
-          { key: 'novel_checklist', label: 'Novel planning checklist notes', rows: 4, placeholder: 'Which planning tasks are done, in progress, or still needed?' },
-          { key: 'enhance_writing', label: 'Ways to enhance the writing', rows: 3, placeholder: 'What craft habits or reading practices will improve this draft?' }
+          { key: 'completion_definition', label: 'What “complete draft” means', rows: 3, placeholder: 'What standard counts as “finished enough” for draft one?', tip: 'Define your personal criteria for a completed first draft.' },
+          { key: 'manuscript_plan', label: 'Completion plan', rows: 4, placeholder: 'How will you move from current state to a completed manuscript?', tip: 'Your roadmap for finishing the entire novel.' },
+          { key: 'novel_checklist', label: 'Novel planning checklist notes', rows: 4, placeholder: 'Which planning tasks are done, in progress, or still needed?', tip: 'Track your progress on the various planning tasks required for your novel.' },
+          { key: 'enhance_writing', label: 'Ways to enhance the writing', rows: 3, placeholder: 'What craft habits or reading practices will improve this draft?', tip: 'Specific actions you will take to improve the quality of your writing.' }
         ]
       },
       {
         title: '🧱 Writer’s Block and Recovery',
         desc: 'Create an anti-stall plan before momentum drops.',
         fields: [
-          { key: 'writers_block_signs', label: 'Signs of writer’s block', rows: 2, placeholder: 'Perfectionism, confusion, fatigue, boredom, fear, over-planning...' },
-          { key: 'writers_block_causes', label: 'Likely causes in this project', rows: 3, placeholder: 'What usually creates resistance on this specific novel?' },
-          { key: 'writers_block_responses', label: 'Responses that work', rows: 3, placeholder: 'What practical moves help you get unstuck?' },
-          { key: 'recommended_reading', label: 'Recommended reading / refill list', rows: 3, placeholder: 'Books or resources that restore craft confidence or inspiration.' }
+          { key: 'writers_block_signs', label: 'Signs of writer’s block', rows: 2, placeholder: 'Perfectionism, confusion, fatigue, boredom, fear, over-planning...', tip: 'Identify the early warning signs that you are experiencing writer\'s block.' },
+          { key: 'writers_block_causes', label: 'Likely causes in this project', rows: 3, placeholder: 'What usually creates resistance on this specific novel?', tip: 'Understand the specific reasons why you might be struggling to write this particular story.' },
+          { key: 'writers_block_responses', label: 'Responses that work', rows: 3, placeholder: 'What practical moves help you get unstuck?', tip: 'Your toolkit of strategies for overcoming writer\'s block and regaining momentum.' },
+          { key: 'recommended_reading', label: 'Recommended reading / refill list', rows: 3, placeholder: 'Books or resources that restore craft confidence or inspiration.', tip: 'A list of sources that inspire and motivate you to write.' }
         ]
       },
       {
@@ -10615,39 +10628,39 @@ const WORKBOOK_PAGE_CONFIG = {
         title: '🛠️ Self-Editing Strategy',
         desc: 'Clarify how you will approach revision before making changes.',
         fields: [
-          { key: 'self_editing_passes', label: 'Editing passes', rows: 3, placeholder: 'Structure pass, character pass, scene pass, prose pass, continuity pass...' },
-          { key: 'revision_priorities', label: 'Top revision priorities', rows: 3, placeholder: 'What must improve first for the manuscript to work better?' },
-          { key: 'editing_techniques', label: 'Editing techniques', rows: 3, placeholder: 'Read aloud, reverse outline, highlighter pass, printout, scene cards...' },
-          { key: 'revision_order', label: 'Revision order', rows: 3, placeholder: 'What should happen first, second, and later?' }
+          { key: 'self_editing_passes', label: 'Editing passes', rows: 3, placeholder: 'Structure pass, character pass, scene pass, prose pass, continuity pass...', tip: 'Different stages of review focusing on specific elements like structure, character, or prose.' },
+          { key: 'revision_priorities', label: 'Top revision priorities', rows: 3, placeholder: 'What must improve first for the manuscript to work better?', tip: 'The most critical issues that need to be addressed first to improve the manuscript.' },
+          { key: 'editing_techniques', label: 'Editing techniques', rows: 3, placeholder: 'Read aloud, reverse outline, highlighter pass, printout, scene cards...', tip: 'Specific methods you will use to review and improve your writing.' },
+          { key: 'revision_order', label: 'Revision order', rows: 3, placeholder: 'What should happen first, second, and later?', tip: 'Your plan for the sequence of revision tasks.' }
         ]
       },
       {
         title: '🧪 Feedback and Critique',
         desc: 'Bring together outside feedback and your analysis of what to do with it.',
         fields: [
-          { key: 'feedback_sources', label: 'Feedback sources', rows: 2, placeholder: 'Critique partner, writing group, editor, trusted reader...' },
-          { key: 'feedback_questions', label: 'Questions to ask readers', rows: 3, placeholder: 'Where were you confused, bored, moved, unconvinced, delighted?' },
-          { key: 'feedback_analysis', label: 'Feedback analysis', rows: 4, placeholder: 'What patterns emerged, and which notes align with your vision?' },
-          { key: 'critique_partner_form', label: 'Critique partner notes', rows: 4, placeholder: 'Use this as the critique-partner feedback form area.' }
+          { key: 'feedback_sources', label: 'Feedback sources', rows: 2, placeholder: 'Critique partner, writing group, editor, trusted reader...', tip: 'The people and groups providing feedback on your work.' },
+          { key: 'feedback_questions', label: 'Questions to ask readers', rows: 3, placeholder: 'Where were you confused, bored, moved, unconvinced, delighted?', tip: 'Specific questions to guide your readers and get the most useful feedback.' },
+          { key: 'feedback_analysis', label: 'Feedback analysis', rows: 4, placeholder: 'What patterns emerged, and which notes align with your vision?', tip: 'Your evaluation of the feedback you received and how you will use it.' },
+          { key: 'critique_partner_form', label: 'Critique partner notes', rows: 4, placeholder: 'Use this as the critique-partner feedback form area.', tip: 'Detailed notes and feedback from your critique partners.' }
         ]
       },
       {
         title: '🧱 Developmental Edit Checklist',
         desc: 'Check the large structural elements of the manuscript.',
         fields: [
-          { key: 'developmental_story', label: 'Story / plot issues', rows: 3, placeholder: 'Structure, pacing, causality, climax, payoff, tension...' },
-          { key: 'developmental_character', label: 'Character issues', rows: 3, placeholder: 'Arc, motivation, relationships, consistency, agency...' },
-          { key: 'developmental_theme', label: 'Theme / world / stakes issues', rows: 3, placeholder: 'Theme clarity, worldbuilding support, stakes, coherence...' },
-          { key: 'beta_reader_checklist', label: 'Beta reader checklist notes', rows: 4, placeholder: 'What specifically do you want beta readers to assess?' }
+          { key: 'developmental_story', label: 'Story / plot issues', rows: 3, placeholder: 'Structure, pacing, causality, climax, payoff, tension...', tip: 'Identify and address structural and plot-related issues in your manuscript.' },
+          { key: 'developmental_character', label: 'Character issues', rows: 3, placeholder: 'Arc, motivation, relationships, consistency, agency...', tip: 'Identify and address character-related issues in your manuscript.' },
+          { key: 'developmental_theme', label: 'Theme / world / stakes issues', rows: 3, placeholder: 'Theme clarity, worldbuilding support, stakes, coherence...', tip: 'Identify and address thematic and worldbuilding issues in your manuscript.' },
+          { key: 'beta_reader_checklist', label: 'Beta reader checklist notes', rows: 4, placeholder: 'What specifically do you want beta readers to assess?', tip: 'A list of criteria for your beta readers to use when evaluating your work.' }
         ]
       },
       {
         title: '🔎 Revision Review, Editing Checklist, and Notes',
         desc: 'Use this section for the workbook’s revision-review and editing-checklist pages.',
         fields: [
-          { key: 'revision_review', label: 'Revision review', rows: 4, placeholder: 'What changed, what still needs work, what got stronger?' },
-          { key: 'editing_checklist', label: 'Editing checklist', rows: 4, placeholder: 'Grammar, consistency, formatting, names, continuity, repeated words...' },
-          { key: 'revision_notes', label: 'Revision notes', rows: 5, placeholder: 'Loose notes for later passes.' }
+          { key: 'revision_review', label: 'Revision review', rows: 4, placeholder: 'What changed, what still needs work, what got stronger?', tip: 'A final review of your revision process and the current state of your manuscript.' },
+          { key: 'editing_checklist', label: 'Editing checklist', rows: 4, placeholder: 'Grammar, consistency, formatting, names, continuity, repeated words...', tip: 'A list of final checks to ensure your manuscript is polished and error-free.' },
+          { key: 'revision_notes', label: 'Revision notes', rows: 5, placeholder: 'Loose notes for later passes.', tip: 'A space for stray thoughts and ideas for future revisions.' }
         ]
       },
       {
@@ -10670,26 +10683,26 @@ const WORKBOOK_PAGE_CONFIG = {
         title: '🧠 Brain Dump',
         desc: 'Unload every loose idea, worry, image, scene fragment, and problem onto one page.',
         fields: [
-          { key: 'brain_dump', label: 'Brain dump', rows: 10, placeholder: 'Messy is welcome here. Write first, organize later.' }
+          { key: 'brain_dump', label: 'Brain dump', rows: 10, placeholder: 'Messy is welcome here. Write first, organize later.', tip: 'A freeform space to capture all your initial thoughts and ideas.' }
         ]
       },
       {
         title: '🔬 Research Organizer',
         desc: 'Track what you need to know and where you found it.',
         fields: [
-          { key: 'research_questions', label: 'Research questions', rows: 3, placeholder: 'What do you still need to learn for accuracy or richness?' },
-          { key: 'research_plan', label: 'Research planner', rows: 3, placeholder: 'What sources, people, archives, or topics should you consult next?' },
-          { key: 'citations', label: 'References and citations', rows: 4, placeholder: 'Sources, links, books, interviews, articles, documentary notes...' },
-          { key: 'research_log', label: 'Research log', rows: 4, placeholder: 'What did you learn, and what story problem does it solve?' }
+          { key: 'research_questions', label: 'Research questions', rows: 3, placeholder: 'What do you still need to learn for accuracy or richness?', tip: 'Identify the specific questions you need to answer through research.' },
+          { key: 'research_plan', label: 'Research planner', rows: 3, placeholder: 'What sources, people, archives, or topics should you consult next?', tip: 'Your plan for conducting research and finding the information you need.' },
+          { key: 'citations', label: 'References and citations', rows: 4, placeholder: 'Sources, links, books, interviews, articles, documentary notes...', tip: 'Keep track of your research sources and references.' },
+          { key: 'research_log', label: 'Research log', rows: 4, placeholder: 'What did you learn, and what story problem does it solve?', tip: 'A record of your research findings and their impact on your story.' }
         ]
       },
       {
         title: '📓 Story Notes',
         desc: 'Capture stray notes that do not belong anywhere else yet.',
         fields: [
-          { key: 'story_notes', label: 'Story notes', rows: 6, placeholder: 'Fragments, reminders, scene sparks, title ideas, marketing thoughts, loose dialogue...' },
-          { key: 'open_questions', label: 'Open questions', rows: 4, placeholder: 'What still has no answer in the manuscript?' },
-          { key: 'parking_lot', label: 'Parking lot', rows: 4, placeholder: 'Good ideas that do not belong in the current draft yet.' }
+          { key: 'story_notes', label: 'Story notes', rows: 6, placeholder: 'Fragments, reminders, scene sparks, title ideas, marketing thoughts, loose dialogue...', tip: 'A space for miscellaneous notes and ideas that don\'t fit elsewhere.' },
+          { key: 'open_questions', label: 'Open questions', rows: 4, placeholder: 'What still has no answer in the manuscript?', tip: 'Identify the unresolved questions and issues in your story.' },
+          { key: 'parking_lot', label: 'Parking lot', rows: 4, placeholder: 'Good ideas that do not belong in the current draft yet.', tip: 'A place to store good ideas that you aren\'t ready to use yet.' }
         ]
       }
     ]
@@ -10707,15 +10720,18 @@ function workbookTableValue(data, key) {
 function renderWorkbookField(pageKey, data, field) {
   const value = workbookFieldValue(data, field.key);
   const style = field.fullWidth ? ' style="grid-column:1 / -1;"' : '';
+  const tipAttr = field.tip ? ` data-tip="${escapeHtml(field.tip)}"` : '';
+  const labelHtml = field.tip ? `<label class="has-tip" onclick="showWorkbookTip(this)"${tipAttr}>${escapeHtml(field.label)} <span class="tip-icon">ⓘ</span></label>` : `<label>${escapeHtml(field.label)}</label>`;
+  
   if (field.type === 'number') {
-    return `<div class="planning-field"${style}><label>${escapeHtml(field.label)}</label><input type="number" value="${escapeHtml(value)}" placeholder="${escapeHtml(field.placeholder || '')}" oninput="updateWorkbookField('${pageKey}','${field.key}',this.value)"></div>`;
+    return `<div class="planning-field" id="field-${field.key}"${style}>${labelHtml}<input type="number" value="${escapeHtml(value)}" placeholder="${escapeHtml(field.placeholder || '')}" oninput="updateWorkbookField('${pageKey}','${field.key}',this.value)"></div>`;
   }
   if (field.type === 'text') {
-    return `<div class="planning-field"${style}><label>${escapeHtml(field.label)}</label><input type="text" value="${escapeHtml(value)}" placeholder="${escapeHtml(field.placeholder || '')}" oninput="updateWorkbookField('${pageKey}','${field.key}',this.value)"></div>`;
+    return `<div class="planning-field" id="field-${field.key}"${style}>${labelHtml}<input type="text" value="${escapeHtml(value)}" placeholder="${escapeHtml(field.placeholder || '')}" oninput="updateWorkbookField('${pageKey}','${field.key}',this.value)"></div>`;
   }
   const rows = field.rows || 3;
   const cls = rows >= 8 ? 'workbook-tall' : rows >= 5 ? 'workbook-compact' : '';
-  return `<div class="planning-field"${style}><label>${escapeHtml(field.label)}</label><textarea class="${cls}" rows="${rows}" placeholder="${escapeHtml(field.placeholder || '')}" oninput="updateWorkbookField('${pageKey}','${field.key}',this.value)">${escapeHtml(value)}</textarea></div>`;
+  return `<div class="planning-field" id="field-${field.key}"${style}>${labelHtml}<textarea class="${cls}" rows="${rows}" placeholder="${escapeHtml(field.placeholder || '')}" oninput="updateWorkbookField('${pageKey}','${field.key}',this.value)">${escapeHtml(value)}</textarea></div>`;
 }
 
 function renderWorkbookTableSection(pageKey, data, section) {
@@ -10731,13 +10747,23 @@ function renderWorkbookTableSection(pageKey, data, section) {
 function renderWorkbookSection(pageKey, data, section) {
   if (section.type === 'table') return renderWorkbookTableSection(pageKey, data, section);
   const gridClass = section.singleColumn ? 'workbook-grid workbook-grid-single' : 'workbook-grid';
-  return `<div class="planning-section"><h2>${escapeHtml(section.title)}</h2>${section.desc ? `<p class="workbook-intro">${escapeHtml(section.desc)}</p>` : ''}<div class="${gridClass}">${(section.fields || []).map(field => renderWorkbookField(pageKey, data, field)).join('')}</div></div>`;
+  const sectionId = section.title.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+  return `<div class="planning-section" id="section-${sectionId}"><h2>${escapeHtml(section.title)}</h2>${section.desc ? `<p class="workbook-intro">${escapeHtml(section.desc)}</p>` : ''}<div class="${gridClass}">${(section.fields || []).map(field => renderWorkbookField(pageKey, data, field)).join('')}</div></div>`;
 }
 
 async function renderWorkbookPage(pageKey) {
   const config = WORKBOOK_PAGE_CONFIG[pageKey];
   if (!config) return;
   const data = await loadPlanningData(pageKey);
+  const pillGroups = (config.sections || []).map(section => {
+    const sectionId = section.title.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+    const fieldPills = (section.fields || []).map(field => ({
+      id: field.key.replace(/_/g, '-'),
+      label: field.label
+    }));
+    return { sectionId, sectionTitle: section.title, fieldPills };
+  });
+
   document.getElementById('main-content').innerHTML = `
     <div class="planning-page">
       <div class="page-header">
@@ -10746,7 +10772,18 @@ async function renderWorkbookPage(pageKey) {
       <p class="page-subtitle">${escapeHtml(config.subtitle || '')}</p>
       <div class="workbook-callout">
         <strong>Workbook coverage:</strong> ${escapeHtml(config.intro || '')}
-        <div class="workbook-chip-row">${(config.coverage || []).map(item => `<span class="workbook-chip">${escapeHtml(item)}</span>`).join('')}</div>
+        <div class="workbook-nav-groups">
+          ${pillGroups.map(group => `
+            <div class="workbook-nav-group" id="nav-group-${group.sectionId}">
+              <span class="workbook-chip chip-section" onclick="toggleWorkbookNavGroup('${group.sectionId}')">${escapeHtml(group.sectionTitle)}</span>
+              <div class="workbook-sub-chips">
+                ${group.fieldPills.map(pill => `
+                  <span class="workbook-chip chip-field" onclick="scrollToWorkbookSection('${pill.id}')">${escapeHtml(pill.label)}</span>
+                `).join('')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
         <div class="workbook-status">Everything on this page auto-saves as you type.</div>
       </div>
       ${(config.sections || []).map(section => renderWorkbookSection(pageKey, data, section)).join('')}
@@ -10788,6 +10825,89 @@ async function deleteWorkbookTableRow(pageKey, tableKey, rowIndex) {
   data.tables[tableKey] = rows;
   await savePlanningData(pageKey, data);
   await renderWorkbookPage(pageKey);
+}
+
+function toggleWorkbookNavGroup(id) {
+  const group = document.getElementById('nav-group-' + id);
+  if (group) {
+    group.classList.toggle('expanded');
+  }
+  scrollToWorkbookSection(id);
+}
+
+function scrollToWorkbookSection(id) {
+  const sections = document.querySelectorAll('.planning-section');
+  let target = document.getElementById('section-' + id);
+  
+  if (!target) {
+    for (const s of sections) {
+      if (s.id && s.id.includes(id)) {
+        target = s;
+        break;
+      }
+    }
+  }
+  
+  if (target) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    target.style.outline = '2px solid #7c3aed';
+    setTimeout(() => target.style.outline = 'none', 2000);
+  } else {
+    const field = document.getElementById('field-' + id.replace(/-/g, '_'));
+    if (field) {
+      field.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      field.style.outline = '2px solid #7c3aed';
+      setTimeout(() => field.style.outline = 'none', 2000);
+    }
+  }
+}
+
+function showWorkbookTip(el) {
+  const tip = el.getAttribute('data-tip');
+  const title = el.innerText.replace(' ⓘ', '');
+  if (!tip) return;
+  
+  let popup = document.getElementById('de-tooltip-popup');
+  if (!popup) {
+    // If popup doesn't exist (e.g. Dialogue Enhancer never opened), create it
+    const div = document.createElement('div');
+    div.id = 'de-tooltip-popup';
+    div.innerHTML = `
+      <button class="de-tp-close" onclick="_deCloseTooltip()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="de-tp-title" id="de-tp-title"></div>
+      <div class="de-tp-body" id="de-tp-body"></div>
+      <div class="de-tp-source" id="de-tp-source"></div>
+    `;
+    document.body.appendChild(div);
+    popup = div;
+    
+    // Add click listener for outside clicks if we just created it
+    document.addEventListener('click', function _deOutsideClick(e){
+      if(popup.classList.contains('show') && !popup.contains(e.target) && !e.target.closest('.has-tip')){
+        _deCloseTooltip();
+      }
+    });
+  }
+  
+  document.getElementById('de-tp-title').textContent = title;
+  document.getElementById('de-tp-body').innerHTML = tip.replace(/\n/g, '<br>');
+  document.getElementById('de-tp-source').textContent = 'Workbook Guide';
+  
+  popup.classList.add('show');
+  
+  const rect = el.getBoundingClientRect();
+  const pw = 280;
+  let left = rect.left + rect.width / 2 - pw / 2;
+  let top = rect.bottom + window.scrollY + 8;
+  
+  if (left + pw > window.innerWidth - 10) left = window.innerWidth - pw - 10;
+  if (left < 10) left = 10;
+  
+  popup.style.left = left + 'px';
+  popup.style.top = top + 'px';
+  popup.style.position = 'absolute'; // Use absolute for scrolling pages
 }
 
 // ── Find Your Idea ────────────────────────────────────────────────────────────
