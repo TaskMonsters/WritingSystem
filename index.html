@@ -54,6 +54,30 @@ a:hover { color: #c4b5fd; }
 .nav-section-label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: #4b5563; text-transform: uppercase; padding: 12px 16px 4px; }
 .nav-item { display: flex; align-items: center; gap: 8px; padding: 8px 16px; color: #9ca3af; cursor: pointer; font-size: 13px; border-radius: 0; transition: all 0.15s; border-left: 3px solid transparent; }
 .nav-item:hover { background: #1a1730; color: #c4b5fd; border-left-color: #4c1d95; }
+.nav-item.dragging { opacity: 0.5; background: #2d2a4a; }
+.nav-section-label.dragging { opacity: 0.5; background: #1a1730; }
+.nav-item .nav-item-text, .nav-section-label .section-label-text { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.nav-item [contenteditable="true"], .nav-section-label [contenteditable="true"] { cursor: text; outline: none; padding: 0 4px; border-radius: 4px; transition: background 0.2s; pointer-events: none; }
+.nav-item [contenteditable="true"].editing, .nav-section-label [contenteditable="true"].editing { pointer-events: auto; background: rgba(124, 58, 237, 0.2); color: #e2d9f3; }
+.nav-edit-icon { 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px; 
+  height: 20px; 
+  margin-left: auto; 
+  cursor: pointer; 
+  opacity: 0; 
+  transition: opacity 0.2s; 
+  flex-shrink: 0; 
+  font-size: 14px;
+  background: transparent;
+  border: none;
+}
+.nav-item:hover .nav-edit-icon, .nav-section-label:hover .nav-edit-icon { opacity: 1; }
+.nav-edit-icon:hover { transform: scale(1.1); }
+.nav-item [contenteditable="true"]:hover, .nav-section-label [contenteditable="true"]:hover { background: rgba(124, 58, 237, 0.1); }
+.nav-item [contenteditable="true"]:focus, .nav-section-label [contenteditable="true"]:focus { background: rgba(124, 58, 237, 0.2); color: #e2d9f3; }
 .nav-item.active { background: #1e1b3a; color: #c4b5fd; border-left-color: #7c3aed; font-weight: 600; }
 
 /* ── BUTTONS ─────────────────────────────────────────────────────────────── */
@@ -241,7 +265,7 @@ textarea { resize: none; overflow-y: hidden; }
 
 /* Magic modal XL size */
 .modal-xl { width: min(900px, 96vw); max-height: 90vh; display: flex; flex-direction: column; }
-.modal-xl .modal-body { flex: 1; overflow-y: auto; }
+.modal-xl .modal-body { flex: 1; overflow-y: auto; height: 500px; min-height: 500px; }
 
 /* Magic tab nav */
 .magic-tab-nav { display: flex; gap: 2px; padding: 0 20px; background: #1a1730; border-bottom: 1px solid #2d2a4a; flex-shrink: 0; overflow-x: auto; }
@@ -4048,6 +4072,7 @@ function escapeHtml(str) {
 
 // ── DEADLINE REMINDER SPEECH BUBBLE ──────────────────────────────────────────
 let _deadlineCheckInterval = null;
+let currentPage = 'dashboard'; // Global track of active page
 // Track which (goalId + threshold) combos have already been shown this session
 const _shownDeadlineAlerts = new Set();
 
@@ -20258,6 +20283,13 @@ function renderSettings() {
           </p>
         </div>
       </div>
+      <div class="settings-section">
+        <h3>Sidebar Layout</h3>
+        <div class="settings-row">
+          <label>Reset sidebar to default arrangement and names</label>
+          <button class="btn btn-ghost" onclick="resetSidebarLayout()">↩ Reset Sidebar</button>
+        </div>
+      </div>
       <div class="settings-section danger-zone">
         <h3>Danger Zone</h3>
         <div class="settings-row">
@@ -20345,69 +20377,239 @@ function restoreNavCollapsedState() {
   });
 }
 
+const DEFAULT_NAV_STRUCTURE = [
+  { id: 'writing', label: 'Writing', items: [
+    { id: 'dashboard', label: '📋 Dashboard' },
+    { id: 'sanctuary', label: '✍️ Sanctuary' },
+    { id: 'dialogue-enhancer', label: '💬 Dialogue Enhancer' }
+  ]},
+  { id: 'planning', label: 'Planning', items: [
+    { id: 'find-idea', label: '💡 Find Your Idea' },
+    { id: 'idea-development', label: '🧠 Idea Development' },
+    { id: 'tropes-list', label: '🎭 Tropes List' },
+    { id: 'ideas-list', label: '📝 Ideas List' },
+    { id: 'character-workbook', label: '👤 Character Workbook' },
+    { id: 'plot-workbook', label: '🧭 Plot Workbook' },
+    { id: 'scenes', label: '🎬 Scenes & Plot' },
+    { id: 'story-arc', label: '📈 Story Arc' },
+    { id: 'story-craft', label: '🎭 Story Craft' },
+    { id: 'setting-worldbuilding', label: '🌍 Setting & Worldbuilding' },
+    { id: 'writing-process', label: '📝 Writing Process' },
+    { id: 'revision-workbook', label: '✏️ Revision Workbook' },
+    { id: 'notes-brain-dump', label: '🗂️ Notes & Brain Dump' }
+  ]},
+  { id: 'worldbuilding', label: 'World Building', items: [
+    { id: 'characters', label: '👤 Characters' },
+    { id: 'locations', label: '🗺️ Locations' },
+    { id: 'lore', label: '📜 Lore & Rules' },
+    { id: 'timeline', label: '📅 Timeline' },
+    { id: 'mapbuilder', label: '🗺️ Map Builder' },
+    { id: 'magic', label: '✨ Magic Systems' }
+  ]},
+  { id: 'progress', label: 'Progress', items: [
+    { id: 'goals', label: '🎯 Goals' },
+    { id: 'research', label: '🔬 Research' },
+    { id: 'revision', label: '✏️ Revision' },
+    { id: 'achievements', label: '🏆 Achievements' },
+    { id: 'quickref', label: '📋 Quick Reference' }
+  ]},
+  { id: 'project', label: 'Project', items: [
+    { id: 'settings', label: '⚙️ Settings' },
+    { id: 'add-custom', label: '+ Add Custom Page', nonDraggable: true }
+  ]}
+];
+
 async function buildSidebar() {
+  if (!currentProject) return;
   const customPages = await dbGet('customPages');
-  const projectPages = customPages.filter(p => p.projectId === currentProject?.id);
+  const activePage = typeof currentPage !== 'undefined' ? currentPage : 'dashboard';
+  const projectPages = customPages.filter(p => p.projectId === currentProject.id);
+  
+  // Load saved layout or use default
+  let layout = currentProject.sidebarLayout || JSON.parse(JSON.stringify(DEFAULT_NAV_STRUCTURE));
+  
+  // Sync custom pages section
+  let customSection = layout.find(s => s.id === 'custompages');
+  if (projectPages.length > 0) {
+    if (!customSection) {
+      customSection = { id: 'custompages', label: 'Custom Pages', items: [] };
+      layout.splice(layout.length - 1, 0, customSection);
+    }
+    const currentCustomIds = projectPages.map(p => 'custom-' + p.id);
+    // Remove deleted
+    customSection.items = customSection.items.filter(i => currentCustomIds.includes(i.id));
+    // Add new
+    projectPages.forEach(p => {
+      const pid = 'custom-' + p.id;
+      if (!customSection.items.find(i => i.id === pid)) {
+        customSection.items.push({ id: pid, label: '📄 ' + p.title });
+      }
+    });
+  } else if (customSection) {
+    layout = layout.filter(s => s.id !== 'custompages');
+  }
+
   const nav = document.getElementById('sidebar-nav');
   if (!nav) return;
-  nav.innerHTML = `
-    <div class="nav-section-label collapsible-section" onclick="toggleNavSection(this)" data-section="writing">
-      <span class="section-label-text">Writing</span><span class="section-toggle-icon">▾</span>
+
+  const pencilIcon = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABAAAAAQACAYAAAB/HSuDAABnL2NhQlgAAGcvanVtYgAAAB5qdW1kYzJwYQARABCAAACqADibcQNjMnBhAAAAZwlqdW1iAAAAR2p1bWRjMm1hABEAEIAAAKoAOJtxA3VybjpjMnBhOjk5ZTcyZDk1LTVlNGMtNDMzZS1iZDEyLTI2YWJkZTdlZDkxNwAAABblanVtYgAAAClqdW1kYzJhcwARABCAAACqADibcQNjMnBhLmFzc2VydGlvbnMAAAAJ0Wp1bWIAAAA7anVtZEDLDDK7ikidpwsq1vR/Q2kTYzJwYS5pY29uAAAAABhjMnNoq2NrSoIVP3jIkOyoTYhGbwAAABdiZmRiAGltYWdlL3N2Zyt4bWwAAAAJd2JpZGI8c3ZnIHdpZHRoPSI3MTYiIGhlaWdodD0iNzE2IiB2aWV3Qm94PSIwIDAgNzE2IDcxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTUwOC43NDkgMzE3LjM5OUM1MTYuNzc3IDI4Ny4zMTQgNTA4Ljk5MSAyNTMuODg0IDQ4NS4zODkgMjMwLjI4MkM0NjEuNzg4IDIwNi42ODEgNDI4LjM2IDE5OC44OTUgMzk4LjI3MyAyMDYuOTIzQzM3Ni4yMzEgMTg0LjkyOCAzNDMuMzkgMTc0Ljk1NiAzMTEuMTQ4IDE4My41OTZDMjc4LjkwNiAxOTIuMjM0IDI1NS40NSAyMTcuMjkyIDI0Ny4zNiAyNDcuMzYxQzIxNy4yOTEgMjU1LjQ1MSAxOTIuMjMzIDI3OC45MSAxODMuNTk1IDMxMS4xNDlDMTc0Ljk1NyAzNDMuMzkxIDE4NC45MjcgMzc2LjIzMiAyMDYuOTI0IDM5OC4yNzRDMTk4Ljg5NiA0MjguMzU5IDIwNi42ODMgNDYxLjc4OSAyMzAuMjg0IDQ4NS4zOTFDMjUzLjg4NSA1MDguOTkyIDI4Ny4zMTMgNTE2Ljc3OSAzMTcuNDAxIDUwOC43NUMzMzkuNDQyIDUzMC43NDUgMzcyLjI4NiA1NDAuNzE3IDQwNC41MjUgNTMyLjA3OUM0MzYuNzY3IDUyMy40NDEgNDYwLjIyMyA0OTguMzg0IDQ2OC4zMTMgNDY4LjMxNUM0OTguMzgzIDQ2MC4yMjQgNTIzLjQ0IDQzNi43NjYgNTMyLjA3OCA0MDQuNTI2QzU0MC43MTYgMzcyLjI4NSA1MzAuNzQ3IDMzOS40NDMgNTA4Ljc0OSAzMTcuNDAyVjMxNy4zOTlaTTQ3MC44OTkgMjQ0Ljc3NkM0ODYuODkyIDI2MC43NyA0OTMuNDg4IDI4Mi42MDEgNDkwLjY4NyAzMDMuNDEyTDQxNS41NzcgMjYwLjA0NkM0MTIuNDExIDI1OC4yMTggNDA4LjUwOSAyNTguMjE4IDQwNS4zNDUgMjYwLjA0NkwzMTcuNDAxIDMxMC44MlYyNzcuNTI2QzMxNy40MDEgMjc1LjE5MSAzMTguNjUyIDI3My4wMDUgMzIwLjY3NiAyNzEuODM3TDM4Ny42NDQgMjMzLjE3NEM0MTQuMTc4IDIxOC4zNTMgNDQ4LjM0NiAyMjIuMjIzIDQ3MC45MDEgMjQ0Ljc3Nkg0NzAuODk5Wk0zNTcuODM3IDMxMS4xNDRMMzk4LjI3NSAzMzQuNDkxVjM4MS4xODVMMzU3LjgzNyA0MDQuNTMyTDMxNy4zOTggMzgxLjE4NVYzMzQuNDkxTDM1Ny44MzcgMzExLjE0NFpNMjY0Ljc3NiAyNjkuNjkzQzI2NS4yMDcgMjM5LjMwNSAyODUuNjQ0IDIxMS42NDkgMzE2LjQ1MyAyMDMuMzkzQzMzOC4zIDE5Ny41NCAzNjAuNTA1IDIwMi43NDQgMzc3LjEyNyAyMTUuNTczTDMwMi4wMTQgMjU4LjkzN0MyOTguODQ4IDI2MC43NjQgMjk2Ljg5OCAyNjQuMTQ0IDI5Ni44OTggMjY3LjI5OFYzNjkuMzQ2TDI2OC4wNjUgMzUyLjY5OUMyNjYuMDQzIDM1MS41MzEgMjY0Ljc3NiAzNDkuMzUzIDI2NC43NzYgMzQ3LjAxN1YyNjkuNjkxVjI2OS42OTNaTTIwMy4zOTEgMzE2LjQ1NEMyMDkuMjQ0IDI5NC42MDggMjI0Ljg1NCAyNzcuOTc4IDI0NC4yNzYgMjY5Ljk5OVYzNTYuNzNDMjQ0LjI3NiAzNjAuMzg0IDI0Ni4yMjYgMzYzLjc2MyAyNDkuMzkyIDM2NS41OTFMMzM3LjMzNyA0MTYuMzY1TDMwOC41MDMgNDMzLjAxM0MzMDYuNDgxIDQzNC4xODEgMzAzLjk2MSA0MzQuMTg4IDMwMS45MzkgNDMzLjAyTDIzNC45NzEgMzk0LjM1N0MyMDguODY4IDM3OC43ODkgMTk1LjEzOCAzNDcuMjYxIDIwMy4zOTEgMzE2LjQ1NFpNMjY0Ljc3NSA0NzAuOUMyMjguNzgxIDQ1NC45MDYgMjIyLjE4NiA0MzMuMDc1IDIyNC45ODYgNDEyLjI2NEwzMDAuMDk2IDQ1NS42M0MzMDMuMjYzIDQ1Ny40NTcgMzA3LjE2NCA0NTcuNDU3IDMxMC4zMjggNDU1LjYzTDM5OC4yNzMgNDA0Ljg1NlY0MzguMTQ5QzM5OC4yNzMgNDQwLjQ4NSAzOTcuMDIyIDQ0Mi42NzEgMzk0Ljk5NyA0NDMuODM5TDMyOC4wMjkgNDgyLjUwMkMzMDEuNDk1IDQ5Ny4zMjIgMjY3LjMyNyA0OTMuNDUyIDI0NC43NzIgNDcwLjlIMjQ0Ljc3NVpNNDUwLjg5NyA0NDUuOTgyQzQ1MC40NjYgNDc2LjM3MSA0MzAuMDI5IDUwNC4wMjcgMzk5LjIyIDUxMi4yODNDMzc3LjM3MyA1MTguMTM2IDM1NS4xNjggNTEyLjkzMiAzMzguNTQ3IDUwMC4xMDJMNDEzLjY1OSA0NTYuNzM4QzQxNi44MjYgNDU0LjkxMSA0MTguNzc1IDQ1MS41MzIgNDE4Ljc3NSA0NDcuODc3VjM0Ni4zMjlMNDQ3LjYwOSAzNjIuOTc3QzQ0OS42MzEgMzY0LjE0NSA0NTAuODk3IDM2Ni4zMjMgNDUwLjg5NyAzNjguNjU5VjQ0NS45ODVWNDQ1Ljk4MlpNNTEyLjI4MiAzOTkuMjIxQzUwNi40MjkgNDIxLjA2OCA0OTAuODE5IDQzNy42OTcgNDcxLjM5NyA0NDUuNjc2VjM1OC45NDZDNDcxLjM5NyAzNTUuMjkyIDQ2OS40NDggMzUxLjkxMiA0NjYuMjgxIDM1MC4wODVMMzc4LjMzNiAyOTkuMzExTDQwNy4xNyAyODIuNjYzQzQwOS4xOTIgMjgxLjQ5NSA0MTEuNzEyIDI4MS40ODcgNDEzLjczNCAyODIuNjU1TDQ4MC43MDIgMzIxLjMxOEM1MDYuODA1IDMzNi44ODcgNTIwLjUzNiAzNjguNDE1IDUxMi4yODIgMzk5LjIyMVoiIGZpbGw9ImJsYWNrIi8+Cjwvc3ZnPgoAAAFFanVtYgAAAEFqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmFjdGlvbnMudjIAAAAAGGMyc2gI/ioP33QNi3QYs4XG8yewAAAA/GNib3KhZ2FjdGlvbnOCpGZhY3Rpb25sYzJwYS5jcmVhdGVkZHdoZW7AdDIwMjYtMDUtMDZUMDA6MDA6MDBabXNvZnR3YXJlQWdlbnSiZG5hbWVpZ3B0LWltYWdlZ3ZlcnNpb25ncHJlLTIuMHFkaWdpdGFsU291cmNlVHlwZXhGaHR0cDovL2N2LmlwdGMub3JnL25ld3Njb2Rlcy9kaWdpdGFsc291cmNldHlwZS90cmFpbmVkQWxnb3JpdGhtaWNNZWRpYaJmYWN0aW9ubmMycGEuY29udmVydGVkZHdoZW7AdDIwMjYtMDUtMDZUMDA6MDA6MDBaAAAK22p1bWIAAABJanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5jZXJ0aWZpY2F0ZS1zdGF0dXMAAAAAGGMyc2h351PKCZFRR0fQkqPXf/+dAAAKimNib3KhaG9jc3BWYWxzgXkKdE1JSUgwd29CQUtDQ0I4d3dnZ2ZJQmdrckJnRUZCUWN3QVFFRWdnZTVNSUlIdFRDQjZhSVdCQlFjKzFlaXdCdEx4cmVlaTFWMWVqMVVmbVJEWFJnUE1qQXlOakExTURReU1qRTJOVE5hTUlHWU1JR1ZNRWt3Q1FZRkt3NERBaG9GQUFRVTM0STNVMTVUMkRPeDRBUTlKRFh4ZGViaENoa0VGRGs5RUVmY2w0K3ZpSHROY3hnZHplWHVwS1VxQWhBTHBmenBEbkNNOGdXQU1lNUVIR1J6Z0FBWUR6SXdNall3TlRBME1qSXhOalV6V3FBUkdBOHlNREkyTURVeE1USXlNVFkxTWxxaElqQWdNQjRHQ1NzR0FRVUZCekFCQmdRUkdBOHlNREUyTURVd05qSXlNVFkxTTFxaEl6QWhNQjhHQ1NzR0FRVUZCekFCQWdRU0JCQkZSV2hzMVE0OFZ3eFhZTFBIemc1ek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQmdRREJsVHBSeUhWeUhTZDB0R2NTbExEbDRGa2tHVWluQ2QvMXdyeXJLbE13dHdQM1plTHRKV0lFMUhHYVpXblBlY2hJV3Z0aXdWcUtDbzViaDVudk11RHJKU3FHb1dtbERKTnlTZDdnTGRpdkdKVnNnR3lDYmIva0NCeFc3bzdINjBMWnpZdmYvcThGNFVLSzVYT1hmUnZoS1ZOc21yTWE5N0xYcytKL09IR0lZY1VuVUEwOWlkQzkxU3ZZTXFvZGhwVDZ4dW5kckYrSGFYU3AyNmRSOVN2SmdTdFNOVWxGcytKUmZQWnBGVnFMeVN4UWtxQWd6cXdoNXJhUzJnVFBIYjZOU0FieVN4c0gxTlRkOWM2ckdkU3UvNnd0a0ZCbU9RN1l4TDNBUlUzb2hHdkxJWWgydVU2QSswcWt6QXcya1hVWm5CVWV5bGFDQnNJeGlZZnZWT2QyaDZSTjZhMXd6TE0yLzJ0TW54ZGQ0bU45ZW5VNWRvTVpiQnE5WDRVK29PYmd1UlFOUkpTQzhyOE5iaTBENGpJMFIxVS93emNtU054bnl6dVR2YkFjYmYxUjlMV0VPOUJtMXNUV0lkMFdwNHM2RW9GbDdSbGJwanVsdktSNDUza2dPejdWSng4elpDS0htb1pPeDJPTFJqU2RZQTNxQ1hZKzJmeFVsV0swZmlLZ2dnVXhNSUlGTFRDQ0JTa3dnZ01Sb0FNQ0FRSUNFR055NnZkY0hFMnhKNlZmZDkyZmRoc3dEUVlKS29aSWh2Y05BUUVMQlFBd1NqRWhNQjhHQTFVRUF3d1lVMU5NTG1OdmJTQkRNbEJCSUVsRFFTQlNNU0F5TURJMU1SZ3dGZ1lEVlFRS0RBOVRVMHdnUTI5eWNHOXlZWFJwYjI0eEN6QUpCZ05WQkFZVEFsVlRNQjRYRFRJMk1ERXdNakl4TVRFMU5Wb1hEVEkzTURFd01qSXhNVEUxTkZvd1RURUxNQWtHQTFVRUJoTUNWVk14RVRBUEJnTlZCQW9NQ0ZOVGJDQkRiM0p3TVNzd0tRWURWUVFERENKVFUwd3VZMjl0SUVNeVVFRWdTVU5CSUZJeElFOURVMUFnVW1WemNHOXVaR1Z5TUlJQm9qQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FZOEFNSUlCaWdLQ0FZRUF6NEp2aXlOdDJhcVBaRTMyR0Y3LzRLcHhzcXlPSExMY3BhWEllR1FxbjVvMXJGZXJLSGJEMmx3SG5pYXlGTUxoYUVGMFVTQ1JTZUFZRXNnWThNWFYyM1Qwd2RSemZuZ1VQV2ZvSVR0b09pWW5IYVRrNllpbm50dFpZMGUvSnpmcVBnc1BUaUg4c3NMdnNpS0VZZmYzS3VPdDZRa1VJQ1pYWVdUemFvQ3NmbVU2cm5QZFROMm9hUmM3eFhkWTZkU3R5UFVGbnpTU1Q5MFZFcFIra0UySW9BSlBUNVQzMUhZbkdhWVlwdGpUb3lydDYyRGplVllKQVI5SmxLVmdjOHZDYkVIenozcDVsSzBSOVArUmVPZlRzMXR3Mi9LT2dkd0xpc3hINHFKS3ZCSU11cVZTVldWWlBhZUhnL1Y2dzFMOHpuWDA2SG5Fa1ZyMGM1VExkQnIrZllPTm55QWg5VWYrUTF2UERGNHRybnI2WFFMVVdjMnI1NmxMMk5VWmx3d3MwV01ZdmVvNkhOdjRWMThwV3RMTnJtUlFuc1AwZ0NMVGlxMml1NHR4bmVHNEpiUmVVblhsK3B3c0p3aTF3a3hjTzFETnJLMmdHRUtlZUpMZFpEc3RQclphT3BTSGNJMmFNeXZYN2dwUU15ekY0MjZ3a0Fvb2EzRmR4OVo1NE9ZbkFnTUJBQUdqZ1ljd2dZUXdEQVlEVlIwVEFRSC9CQUl3QURBZkJnTlZIU01FR0RBV2dCUTVQUkJIM0plUHI0aDdUWE1ZSGMzbDdxU2xLakFQQmdrckJnRUZCUWN3QVFVRUFnVUFNQk1HQTFVZEpRUU1NQW9HQ0NzR0FRVUZCd01KTUIwR0ExVWREZ1FXQkJRYysxZWl3QnRMeHJlZWkxVjFlajFVZm1SRFhUQU9CZ05WSFE4QkFmOEVCQU1DQjRBd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dJQkFESGx0V3QvZGh2WHd0c3FmZWtmajY3Y215L3YzaDdtZ1hqbk5hYWhVbHNNYm10Y2kzUnBHU29BZ00yV2lPR0diYm5YVnFDVHFXOGludFJXVkNtVTJyOHlMTUtNNmlSVVh6UXExMU5td3I5SDl2L3NuWWRSbmpSQkQ4dGtEMEY0ZmpHc05oeUhUSFVieHBNWnhyUk5BZTBhaC9HQU5mdFFCNC9IVDFvViszRUp2cHBqL3N1SGZvWWhsajhLZ2N4WGgvQlVKbmJkcUtYc2NhMGRsd1E2TjVubzBhWFNJY0NUby90djNrbGsvZG0xV3JBc09yOC92bEtpR0NuVTdiQXVpaXdiU2lNeCtxZXdocmFJbGJEYWtEeDcwbVpCTEs1cUZVdks5MU1DUHBpOWZMTEV0ZWtITkw4VUs1WkpLNmxDTWQ4Vndza3RucFc5RG1XNitYc3llMWpCOGF0V0ppbFFlRHMzQ29RcVFvZmhidlBmZkxzTElGSmZnMzFFbmRqRnNrcTE1Um5RZ01NRThkbkhBWmdnWlpyL2tVZnlyY3Q1VDE5SlFXWEN2QXhQcTFkMGpWdkgySWtZaTZZTjRCcStPWkptejdQNG5OdHltOXdJcU9COC95RE5na1hqUzQ3eFFkaitxWVBTZ3B5U2FYMHVWbkJwaThtNDlITHQrUDBlNnp2TXlPcTFVazhJcVNPVFpTNkJXOTZUQWNVZDJGZVBRTWNpR2xEak9YcUgrc1RCL0NGTGh2eCt2NUxjVDRaamlnVzlYa05FaEZjeUFlRHVpTis0UWhoVHAzclg1UGpaV21tVm55L0V6TWR4R0U3WWo2MVhYUnR0bSt4ODBlOUFFSzd3UXVpejA4a3l4Rk1XYVRuSE51N3luRVQ4UGNMbkF2bm4ybmxreHhVVQAAAMNqdW1iAAAAQGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaGFzaC5kYXRhAAAAABhjMnNoQyxfBP0nJmFKxgVUcmlIsgAAAHtjYm9ypWpleGNsdXNpb25zgaJlc3RhcnQYIWZsZW5ndGgZZztkbmFtZW5qdW1iZiBtYW5pZmVzdGNhbGdmc2hhMjU2ZGhhc2hYIFeolahWRRwJhFjnBvVZJ6ZoKdtnQHUvmDFBRIxEYsNdY3BhZEgAAAAAAAAAAAAAAxpqdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAAC62Nib3Kmamluc3RhbmNlSUR4LHhtcDppaWQ6M2ZhMWVjNjctYjc4OC00NzEyLWE0NTUtZWU0OTdkZWM2NWE2dGNsYWltX2dlbmVyYXRvcl9pbmZvpGRuYW1leBhPcGVuQUkgTWVkaWEgU2VydmljZSBBUElkaWNvbqJjdXJseCRzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmljb25kaGFzaFggMwVTIYM7N7yCWHfaypX4qTtyIZpcOH1ejwfbFylBTpNrc3BlY1ZlcnNpb25lMi4yLjB3b3JnLmNvbnRl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';
+  nav.innerHTML = layout.map(section => `
+    <div class="nav-section-container" data-section-id="${section.id}">
+      <div class="nav-section-label collapsible-section" draggable="true" ondragstart="handleNavDragStart(event, 'section')" ondragover="handleNavDragOver(event)" ondrop="handleNavDrop(event, 'section')" data-section="${section.id}" onclick="toggleNavSection(this)">
+        <span class="section-label-text" contenteditable="true" 
+              onclick="event.stopPropagation()" 
+              onkeydown="handleNavRenameKey(event)"
+              onblur="finishNavRename(event, 'section', '${section.id}')">${escapeHtml(section.label)}</span>
+        <span class="nav-edit-icon" onclick="startNavRename(event)" title="Rename">🖋</span>
+        <span class="section-toggle-icon">▾</span>
+      </div>
+      <div class="nav-section-items" data-section="${section.id}">
+        ${section.items.map(item => `
+          <a class="nav-item ${activePage === item.id ? 'active' : ''}" 
+             draggable="${!item.nonDraggable}" 
+             ondragstart="handleNavDragStart(event, 'item')" 
+             ondragover="handleNavDragOver(event)" 
+             ondrop="handleNavDrop(event, 'item')"
+             onclick="${item.id === 'add-custom' ? 'addCustomPage()' : `navigateTo('${item.id}')`}" 
+             data-page="${item.id}">
+            <span class="nav-item-text" contenteditable="${!item.nonDraggable}" 
+                  onclick="event.stopPropagation()" 
+                  onkeydown="handleNavRenameKey(event)"
+                  onblur="finishNavRename(event, 'item', '${section.id}', '${item.id}')">${escapeHtml(item.label)}</span>
+            ${!item.nonDraggable ? `<span class="nav-edit-icon" onclick="startNavRename(event)" title="Rename">🖋</span>` : ''}
+          </a>
+        `).join('')}
+      </div>
     </div>
-    <div class="nav-section-items" data-section="writing">
-    <a class="nav-item" onclick="navigateTo('dashboard')" data-page="dashboard">📋 Dashboard</a>
-    <a class="nav-item" onclick="navigateTo('sanctuary')" data-page="sanctuary">✍️ Sanctuary</a>
-    <a class="nav-item" onclick="navigateTo('dialogue-enhancer')" data-page="dialogue-enhancer">💬 Dialogue Enhancer</a>
-    </div>
-    <div class="nav-section-label collapsible-section" onclick="toggleNavSection(this)" data-section="planning">
-      <span class="section-label-text">Planning</span><span class="section-toggle-icon">▾</span>
-    </div>
-    <div class="nav-section-items" data-section="planning">
-      <a class="nav-item" onclick="navigateTo('find-idea')" data-page="find-idea">💡 Find Your Idea</a>
-      <a class="nav-item" onclick="navigateTo('idea-development')" data-page="idea-development">🧠 Idea Development</a>
-      <a class="nav-item" onclick="navigateTo('tropes-list')" data-page="tropes-list">🎭 Tropes List</a>
-      <a class="nav-item" onclick="navigateTo('ideas-list')" data-page="ideas-list">📝 Ideas List</a>
-      <a class="nav-item" onclick="navigateTo('character-workbook')" data-page="character-workbook">👤 Character Workbook</a>
-      <a class="nav-item" onclick="navigateTo('plot-workbook')" data-page="plot-workbook">🧭 Plot Workbook</a>
-      <a class="nav-item" onclick="navigateTo('scenes')" data-page="scenes">🎬 Scenes & Plot</a>
-      <a class="nav-item" onclick="navigateTo('story-arc')" data-page="story-arc">📈 Story Arc</a>
-      <a class="nav-item" onclick="navigateTo('story-craft')" data-page="story-craft">🎭 Story Craft</a>
-      <a class="nav-item" onclick="navigateTo('setting-worldbuilding')" data-page="setting-worldbuilding">🌍 Setting & Worldbuilding</a>
-      <a class="nav-item" onclick="navigateTo('writing-process')" data-page="writing-process">📝 Writing Process</a>
-      <a class="nav-item" onclick="navigateTo('revision-workbook')" data-page="revision-workbook">✏️ Revision Workbook</a>
-      <a class="nav-item" onclick="navigateTo('notes-brain-dump')" data-page="notes-brain-dump">🗂️ Notes & Brain Dump</a>
-    </div>
-    <div class="nav-section-label collapsible-section" onclick="toggleNavSection(this)" data-section="worldbuilding">
-      <span class="section-label-text">World Building</span><span class="section-toggle-icon">▾</span>
-    </div>
-    <div class="nav-section-items" data-section="worldbuilding">
-      <a class="nav-item" onclick="navigateTo('characters')" data-page="characters">👤 Characters</a>
-      <a class="nav-item" onclick="navigateTo('locations')" data-page="locations">🗺️ Locations</a>
-      <a class="nav-item" onclick="navigateTo('lore')" data-page="lore">📜 Lore & Rules</a>
-      <a class="nav-item" onclick="navigateTo('timeline')" data-page="timeline">📅 Timeline</a>
-      <a class="nav-item" onclick="navigateTo('mapbuilder')" data-page="mapbuilder">🗺️ Map Builder</a>
-      <a class="nav-item" onclick="navigateTo('magic')" data-page="magic">✨ Magic Systems</a>
-    </div>
-    <div class="nav-section-label collapsible-section" onclick="toggleNavSection(this)" data-section="progress">
-      <span class="section-label-text">Progress</span><span class="section-toggle-icon">▾</span>
-    </div>
-    <div class="nav-section-items" data-section="progress">
-      <a class="nav-item" onclick="navigateTo('goals')" data-page="goals">🎯 Goals</a>
-      <a class="nav-item" onclick="navigateTo('research')" data-page="research">🔬 Research</a>
-      <a class="nav-item" onclick="navigateTo('revision')" data-page="revision">✏️ Revision</a>
-      <a class="nav-item" onclick="navigateTo('achievements')" data-page="achievements">🏆 Achievements</a>
-      <a class="nav-item" onclick="navigateTo('quickref')" data-page="quickref">📋 Quick Reference</a>
-    </div>
-    ${projectPages.length > 0 ? `<div class="nav-section-label collapsible-section" onclick="toggleNavSection(this)" data-section="custompages"><span class="section-label-text">Custom Pages</span><span class="section-toggle-icon">▾</span></div><div class="nav-section-items" data-section="custompages">${projectPages.map(p => `<a class="nav-item" onclick="navigateTo('custom-${p.id}')" data-page="custom-${p.id}">📄 ${escapeHtml(p.title)}</a>`).join('')}</div>` : ''}
-    <div class="nav-section-label collapsible-section" onclick="toggleNavSection(this)" data-section="project">
-      <span class="section-label-text">Project</span><span class="section-toggle-icon">▾</span>
-    </div>
-    <div class="nav-section-items" data-section="project">
-      <a class="nav-item" onclick="navigateTo('settings')" data-page="settings">⚙️ Settings</a>
-      <a class="nav-item" onclick="addCustomPage()">+ Add Custom Page</a>
-    </div>`;
-  // Restore collapsed state after DOM is updated
+  `).join('');
+
   requestAnimationFrame(restoreNavCollapsedState);
+}
+
+let draggedElement = null;
+let dragType = null;
+
+function handleNavDragStart(e, type) {
+  draggedElement = e.currentTarget;
+  dragType = type;
+  e.dataTransfer.effectAllowed = 'move';
+  e.currentTarget.classList.add('dragging');
+}
+
+function handleNavDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+}
+
+async function handleNavDrop(e, type) {
+  e.preventDefault();
+  const target = e.currentTarget;
+  if (!draggedElement || draggedElement === target || dragType !== type) {
+    if (draggedElement) draggedElement.classList.remove('dragging');
+    return;
+  }
+
+  const layout = currentProject.sidebarLayout || JSON.parse(JSON.stringify(DEFAULT_NAV_STRUCTURE));
+  
+  if (type === 'section') {
+    const draggedId = draggedElement.dataset.section;
+    const targetId = target.dataset.section;
+    const draggedIdx = layout.findIndex(s => s.id === draggedId);
+    const targetIdx = layout.findIndex(s => s.id === targetId);
+    const [removed] = layout.splice(draggedIdx, 1);
+    layout.splice(targetIdx, 0, removed);
+  } else {
+    const draggedId = draggedElement.dataset.page;
+    const targetId = target.dataset.page;
+    const sourceSectionId = draggedElement.closest('.nav-section-items').dataset.section;
+    const targetSectionId = target.closest('.nav-section-items').dataset.section;
+    
+    const sourceSection = layout.find(s => s.id === sourceSectionId);
+    const targetSection = layout.find(s => s.id === targetSectionId);
+    
+    const draggedIdx = sourceSection.items.findIndex(i => i.id === draggedId);
+    const [removed] = sourceSection.items.splice(draggedIdx, 1);
+    
+    const targetIdx = targetSection.items.findIndex(i => i.id === targetId);
+    targetSection.items.splice(targetIdx, 0, removed);
+  }
+
+  currentProject.sidebarLayout = layout;
+  await dbPut('projects', currentProject);
+  await buildSidebar();
+  draggedElement = null;
+}
+
+function handleNavRenameKey(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    e.target.blur();
+  }
+}
+
+function startNavRename(e) {
+  e.stopPropagation();
+  const labelSpan = e.currentTarget.parentElement.querySelector('.section-label-text, .nav-item-text');
+  if (labelSpan) {
+    labelSpan.classList.add('editing');
+    labelSpan.focus();
+    // Select all text
+    const range = document.createRange();
+    range.selectNodeContents(labelSpan);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+}
+
+async function finishNavRename(e, type, sectionId, itemId) {
+  const el = e.target;
+  el.classList.remove('editing');
+  const newName = el.innerText.trim();
+  const layout = currentProject.sidebarLayout || JSON.parse(JSON.stringify(DEFAULT_NAV_STRUCTURE));
+  const section = layout.find(s => s.id === sectionId);
+  
+  if (type === 'section') {
+    if (!newName || newName === section.label) {
+      el.innerText = section.label; // Restore if empty
+      return;
+    }
+    section.label = newName;
+  } else {
+    const item = section.items.find(i => i.id === itemId);
+    if (!newName || newName === item.label) {
+      el.innerText = item.label; // Restore if empty
+      return;
+    }
+    item.label = newName;
+    
+    // If it's a custom page, also update the customPages store
+    if (itemId.startsWith('custom-')) {
+      const customId = itemId.replace('custom-', '');
+      const customPages = await dbGet('customPages');
+      const cp = customPages.find(p => p.id === customId);
+      if (cp) {
+        cp.title = newName.replace(/^📄\s*/, '').trim();
+        await dbPut('customPages', cp);
+      }
+    }
+  }
+
+  currentProject.sidebarLayout = layout;
+  await dbPut('projects', currentProject);
+}
+
+async function resetSidebarLayout() {
+  if (!confirm('Reset sidebar to default layout and names?')) return;
+  delete currentProject.sidebarLayout;
+  
+  // Also reset custom page titles in the store if needed, 
+  // but usually users just want the structure back. 
+  // The request says "default page names", so we'll clear the layout.
+  
+  await dbPut('projects', currentProject);
+  await buildSidebar();
+  showToast('Sidebar reset to default.');
 }
 
 async function addCustomPage() {
@@ -20415,6 +20617,18 @@ async function addCustomPage() {
   if (!title || !title.trim()) return;
   const page = { id: uid(), projectId: currentProject.id, title: title.trim(), showNotes: true, createdAt: Date.now() };
   await dbPut('customPages', page);
+  
+  // Ensure the layout is updated if it exists
+  if (currentProject.sidebarLayout) {
+    let customSection = currentProject.sidebarLayout.find(s => s.id === 'custompages');
+    if (!customSection) {
+      customSection = { id: 'custompages', label: 'Custom Pages', items: [] };
+      currentProject.sidebarLayout.splice(currentProject.sidebarLayout.length - 1, 0, customSection);
+    }
+    customSection.items.push({ id: 'custom-' + page.id, label: '📄 ' + page.title });
+    await dbPut('projects', currentProject);
+  }
+  
   await buildSidebar();
   navigateTo('custom-' + page.id);
 }
